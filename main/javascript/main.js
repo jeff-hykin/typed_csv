@@ -85,7 +85,60 @@ export const parseCell = (each)=>{
     }
 }
 
-
+export function* parseIter(csvString, { delimiter=",", warnings=true, asObject=true, ...options }={}) {
+    const iterable = iter(
+        csvParseIter(csvString, { delimiter, ...options })
+    )
+    // 
+    // process headers
+    // 
+    let headers = next(iterable)
+    if (headers == stop) {
+        throw Error(`When trying to parse a typed csv, there must be a header row and I didn't find one. String was: ${csvString}`)
+    }
+    headers = headers.map(each=>{
+        const value = parseCell(each)
+        if (typeof value != "string") {
+            return each
+        } else {
+            return value
+        }
+    })
+    const headersBefore = warnings ? JSON.stringify(headers) : null
+    headers = ensureUniqueNames(headers)
+    if (warnings && headersBefore != JSON.stringify(headers)) {
+        console.warn(`Warning: When trying to parse a typed csv, the columns names (headers) were not unique, and are required to be. I made it unique, but you may want to check the results. Original headers: ${headersBefore}, Unique headers: ${JSON.stringify(headers)}. Use the {warnings: false} option to disable this warning`)
+    }
+    
+    // 
+    // body
+    // 
+    const outputObject = Object.fromEntries(headers.map(each=>[each, []]))
+    let longRowWarningSent = false
+    let rowIndex = -1
+    for (const row of iterable) {
+        rowIndex +=1
+        if (row == stop) {
+            break
+        }
+        if (asObject) {
+            // even if the row is short, this zip methods will pad it out with undefineds
+            for (const [rowValue, headerName] of zip(row, headers)) {
+                // values that are not under a named column will be ignored
+                if (headerName == undefined) {
+                    if (!longRowWarningSent && warnings) {
+                        longRowWarningSent = true
+                        console.warn(`Warning: When trying to parse a typed csv, row ${rowIndex+1} was longer than the header row. These values will be ignored. Use the {warnings: false} option to disable this warning`)
+                    }
+                    continue
+                }
+                
+                row[headerName] = parseCell(rowValue)
+            }
+        }
+        yield row
+    }
+}
 
 /**
  * Escapes a value for inclusion in a CSV cell, handling various data types.

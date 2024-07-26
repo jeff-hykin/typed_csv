@@ -109,11 +109,11 @@ export function* parseIter(csvString, { delimiter=",", warnings=true, asObject=t
     if (warnings && headersBefore != JSON.stringify(headers)) {
         console.warn(`Warning: When trying to parse a typed csv, the columns names (headers) were not unique, and are required to be. I made it unique, but you may want to check the results. Original headers: ${headersBefore}, Unique headers: ${JSON.stringify(headers)}. Use the {warnings: false} option to disable this warning`)
     }
+    yield headers
     
     // 
     // body
     // 
-    const outputObject = Object.fromEntries(headers.map(each=>[each, []]))
     let longRowWarningSent = false
     let rowIndex = -1
     for (const row of iterable) {
@@ -138,6 +138,26 @@ export function* parseIter(csvString, { delimiter=",", warnings=true, asObject=t
         }
         yield row
     }
+}
+
+export const parse = (csvString, { delimiter=",", warnings=true, asObject=true, ...options }={}) => {
+    const iterable = iter(
+        parseIter(csvString, { delimiter, warnings, asObject: false, ...options })
+    )
+    let headers = next(iterable) // error would already have been thrown if no headers
+    const outputObject = Object.fromEntries(headers.map(each=>[each, []]))
+    for (const row of iterable) {
+        // even if the row is short, this zip methods will pad it out with undefineds
+        for (const [rowValue, headerName] of zip(row, headers)) {
+            // values that are not under a named column will be ignored
+            if (headerName == undefined) {
+                // iter parser already warned about this
+                continue
+            }
+            outputObject[headerName].push(parseCell(rowValue))
+        }
+    }
+    return outputObject
 }
 
 /**
@@ -278,52 +298,3 @@ function* iterGenerateCsv(data, { headers=[], delimiter=",", ...options }={}) {
         yield [...row].map(each=>csvEscapeCell(stringifyCell(each, options))).join(delimiter)+"\n"
     }
 }
-
-
-// WIP: custom iterator-based CSV parser 
-// export const parse = (iterable, { delimiter=",", commentSymbol="#", ...options }={}) => {
-//     if (typeof iterable === "string") {
-//         iterable = iterable.split("\n")
-//     }
-//     const iterable = iter(iterable)
-//     const headers = next(iterable)
-//     const commentPattern = new RegExp(regex`^${commentSymbol}`.source)
-//     let accumulator = ""
-//     for (const row of iterable) {
-//         if (each.match(commentPattern)) {
-//             continue
-//         }
-//         let remaining = row
-//         let rowAsStringList = []
-//         while (remaining.length > 0) {
-//             const simpleMatch = row.match(regex`^([^${delimiter}\n\r]+)`)
-//             if (simpleMatch) {
-//                 remaining = remaining.slice(simpleMatch[0].length)
-//                 rowAsList.push(simpleMatch[1])
-//                 continue
-//             }
-//             const quotedMatch = remaining.match(/^[\t\n]*"/)
-//             if (quotedMatch) {
-//                 remaining = remaining.slice(quotedMatch[0].length)
-//                 remaining.match(/^([^"]|"")*"/)
-//             }
-//         }
-//         const row = each.split(delimiter)
-//         yield row
-// 
-//     }
-//     const rows = csv.parse(csvString, { delimiter })
-//     for (const eachRow of rows) {
-//         let index = -1
-//         for (const each of eachRow) {
-//             index++
-//             try {
-//                 eachRow[index] = parseCell(each)
-//             } catch (error) {
-//                 eachRow[index] = each
-//             }
-//         }
-//     }
-//     return rows
-// }
-

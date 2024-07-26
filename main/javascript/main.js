@@ -9,7 +9,7 @@ import { zip } from "https://deno.land/x/good@1.7.1.1/flattened/zip.js"
 import { toRepresentation } from "https://deno.land/x/good@1.7.1.1/flattened/to_representation.js"
 
 import { ensureUniqueNames, rowify } from "./helpers.js"
-import { csvParseIter } from "./normal_csv.js"
+import { csvParseIter, csvEscapeCell } from "./normal_csv.js"
 
 export const toTypedCsv = Symbol()
 
@@ -25,7 +25,7 @@ const matchesReservedPattern = (string)=>{
         // to allow regex (yeah yeah i know i know)
         (string.startsWith("/") && string.match(/\/([igmusyv]*)$/)) ||
         // default comment symbol
-        string.startsWith(/#/) ||
+        string.startsWith("#") ||
         // to allow durations and times in the future
         string.match(/^\d+:/) ||
         // to allow dates (no times) either YYYY-MM-DD and DD/MM/YYYY (probably only want to support YYYY-MM-DD, but will reserve both)
@@ -84,7 +84,7 @@ export const parseCell = (each)=>{
     }
 }
 
-export function* parseIter(csvString, { delimiter=",", warnings=true, asObjects=true, ...options }={}) {
+export function* parseIter(csvString, { delimiter=",", warnings=true, asObjects=true, commentSymbol="", ...options }={}) {
     const iterable = iter(
         csvParseIter(csvString, { delimiter, ...options })
     )

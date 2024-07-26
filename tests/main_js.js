@@ -6,4 +6,4 @@ const fileContent = await FileSystem.read(path)
 
 const result = await parse(fileContent)
 console.log(JSON.stringify(result,0,4))
-console.log(stringify(result))
+console.log(stringify(result.rows, {headers:result.headers}))

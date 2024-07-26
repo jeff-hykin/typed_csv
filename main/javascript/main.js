@@ -1,4 +1,3 @@
-// import * as csv from "csv/dist/esm/index.js"
 import * as yaml from "https://deno.land/std@0.168.0/encoding/yaml.ts"
 import { isSyncIterable } from "https://deno.land/x/good@1.7.1.1/flattened/is_sync_iterable.js"
 import { iter } from "https://deno.land/x/good@1.7.1.1/flattened/iter.js"

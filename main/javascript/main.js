@@ -244,7 +244,7 @@ export const stringifyCell = (each, options={})=>{
     // remaining non-strings just get yamlified
     if (typeof each != "string") {
         let newString = yaml.stringify(each, { collectionStyle: 'flow', ...options.yamlOptions })
-        // remove trailing newline (which is always a save operation)
+        // remove trailing newline (which is always a safe operation)
         if (newString[newString.length-1] == "\n") {
             newString = newString.slice(0,-1)
         }

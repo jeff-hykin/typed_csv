@@ -144,6 +144,25 @@ export function* parseIter(csvString, { delimiter=",", warnings=true, asObjects=
     }
 }
 
+/**
+ * Parses a CSV string and returns the data in either a rows or dataframe format.
+ *
+ * This function takes a CSV string and various options to control the parsing
+ * behavior. It returns the parsed data in either a rows format (an array of
+ * arrays representing the rows) or a dataframe format (an object where the
+ * keys are the column names and the values are arrays of the column data).
+ *
+ * @param {string} csvString - The CSV string to be parsed.
+ * @param {object} [options] - Optional configuration options.
+ * @param {string} [options.delimiter=","] - The delimiter used to separate values in the CSV.
+ * @param {boolean} [options.warnings=true] - Whether to display warnings for potential issues during parsing.
+ * @param {string} [options.outputForm="rows"] - The format to return the parsed data in, either "rows" or "dataframe".
+ * @param {string} [options.asObjects=true] - each row will be given column-name attributes (ex: row.age will be the age value)
+ * @param {any} [options....] - Any additional options to pass to the underlying CSV parsing implementation.
+ * @returns {Object} output - The parsed CSV data, either in rows or dataframe format.
+ * @returns {[String]} output.headers - An array of the column names
+ * @returns {[[any]]} output.rows - Rows of data, each row is both an object (if asObjects is true) and an array. Ex: row[2] and row.age 
+ */
 export const parse = (csvString, { delimiter=",", warnings=true, outputForm="rows", ...options }={}) => {
     if (outputForm == "rows") {
         const iterable = iter(
@@ -257,9 +276,9 @@ export const stringifyCell = (each, options={})=>{
 }
 
 /**
- * Converts an iterable of data into a typed CSV string
+ * Converts rows or dataframes data into a typed CSV string
  *
- * @param {Iterable} data - The data to be converted to a CSV string. Must be a synchronous iterable (e.g. array, set, generator).
+ * @param {Iterable|Object} data - Dataframe, or array of objects (keys will become headers), or array of arrays (rows)
  * @param {Object} [options] - Options (duh)
  * @param {Array} [options.headers=[]] - An array of header values to use for the CSV output.
  * @param {string} [options.delimiter=","] - The delimiter to use between values in the CSV output.

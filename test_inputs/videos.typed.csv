@@ -1,0 +1,6 @@
+uploadAction,videoId,path,durationInSeconds,comment,(numberOfObservations),(numberOfWatchers),(numberOfLabelers),(numberOfVerifiers),(usersWhoFinishedWatching),(usersWhoFinishedLabeling),(usersWhoFinishedVerifying)
+update,39tbp74ntvx,demo1.39tbp74ntvx.mp4,2.383333,,,1,0,0,[ jeff.hykin@gmail.com ],[],[]
+update,dckg4cym3uw,autocomplete_issue.9ozc1jyxra2.dckg4cym3uw.mov,25.633333,,,0,0,0,[],[],[]
+update,fajlfj430,demo3.fajlfj430.mp4,2.383333,,,1,0,0,[ jeff.hykin@gmail.com ],[],[]
+update,my8d65l96ql,demo2.my8d65l96ql.mp4,2.383333,,,1,0,0,[ jeff.hykin@gmail.com ],[],[]
+update,yob91d1jwtq,demo1.yob91d1jwtq.mp4,2.383333,,,1,1,1,[ jeff.hykin@gmail.com ],[ jeff.hykin@gmail.com ],[ jeff.hykin@gmail.com ]

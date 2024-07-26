@@ -9,7 +9,32 @@ import { regex } from "https://deno.land/x/good@1.7.1.1/flattened/regex.js"
 import { zip } from "https://deno.land/x/good@1.7.1.1/flattened/zip.js"
 import { toRepresentation } from "https://deno.land/x/good@1.7.1.1/flattened/to_representation.js"
 
-const toTypedCsv = Symbol()
+import { ensureUniqueNames, rowify } from "./helpers.js"
+import { csvParseIter } from "./normal_csv.js"
+
+export const toTypedCsv = Symbol()
+
+// small helpers
+const w3schoolsIsoDateRegex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
+const extraIsoDateRegex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/
+const simpleDateRegex = /^\d{4}-\d{1,2}-\d{1,2}($| |\t)/
+const matchesIso8601Date = (string)=>string.match(w3schoolsIsoDateRegex) || string.match(extraIsoDateRegex)
+const matchesReservedPattern = (string)=>{
+    return (
+        // to allow computed items / equations
+        string.startsWith("=") ||
+        // to allow regex (yeah yeah i know i know)
+        (string.startsWith("/") && string.match(/\/([igmusyv]*)$/)) ||
+        // default comment symbol
+        string.startsWith(/#/) ||
+        // to allow durations and times in the future
+        string.match(/^\d+:/) ||
+        // to allow dates (no times) either YYYY-MM-DD and DD/MM/YYYY (probably only want to support YYYY-MM-DD, but will reserve both)
+        string.match(simpleDateRegex) || string.match(/^\d{1,2}\/\d{1,2}\/\d{1,2}($| |\t)/) ||
+        // ISO date
+        matchesIso8601Date(string)
+    )
+}
 
 /**
  * Resolves a value from a CSV cell to a typed JavaScript value.
@@ -21,7 +46,7 @@ const toTypedCsv = Symbol()
  * @param {string} each - The CSV cell value to be resolved.
  * @returns {any} - The resolved JavaScript value.
  */
-export const typeResolve = (each)=>{
+export const parseCell = (each)=>{
     const trimmed = each.trim()
     if (trimmed.length == 0) {
         return null
@@ -60,6 +85,8 @@ export const typeResolve = (each)=>{
     }
 }
 
+
+
 /**
  * Escapes a value for inclusion in a CSV cell, handling various data types.
  * 
@@ -77,7 +104,7 @@ export const typeResolve = (each)=>{
  * YAML library when formatting complex data types.
  * @returns {string} - The escaped CSV cell value.
  */
-export const typeEscape = (each, options={})=>{
+export const stringifyCell = (each, options={})=>{
     // undefined become empty cell
     if (each == undefined) {
         return ""
@@ -142,93 +169,6 @@ export const typeEscape = (each, options={})=>{
 }
 
 /**
- * Escapes a string value for use in a CSV cell.
- *
- * If the string contains the CSV delimiter, newline, carriage return, or double quotes, it will be enclosed in double quotes and any existing double quotes will be escaped by doubling them.
- * Otherwise, the string will be returned as-is.
- *
- * @param {string} stringData - The string value to escape.
- * @param {string} [delimiter=","] - The CSV delimiter character.
- * @returns {string} The escaped string value.
- */
-export const csvEscapeCell = (stringData, delimiter=",")=>{
-    if (stringData.includes(delimiter) || stringData.includes("\n") || stringData.includes("\r") || stringData.includes("\"")) {
-        return stringData.replace(/\"/g, '""')
-    } else {
-        return stringData
-    }
-}
-
-export const ensureUniqueNames = (headers) => {
-    const duplicateHeadersExist = (new Set(headers).size!== headers.length)
-    if (!duplicateHeadersExist) {
-        return headers
-    }
-    let incremental = []
-    for (const each of headers) {
-        if (incremental.includes(each)) {
-            let startNumber = 1
-            let nextAttempt = `${each}${startNumber}`
-            while (incremental.includes(nextAttempt)) {
-                startNumber+=1
-                nextAttempt = `${each}${startNumber}`
-            }
-            incremental.push(nextAttempt)
-        } else {
-            incremental.push(each)
-        }
-    }
-    return incremental
-}
-
-export function* iterGenerateCsv(data, { headers=[], delimiter=",", ...options }={}) {
-    if (!isSyncIterable(data)) {
-        throw new Error(`data must be an synchnous iterable (array, set, generator, etc), instead I got: ${toRepresentation(data)}`)
-    }
-    // require having a header, and they must be strings
-    yield ensureUniqueNames(headers).map(each=>csvEscapeCell(String(each))).join(delimiter)+"\n"
-    for (const row of data) {
-        yield [...row].map(each=>csvEscapeCell(typeEscape(each, options))).join(delimiter)+"\n"
-    }
-}
-
-/**
- * Converts an array/iterable of objects into array-of-arrays (array of rows) with headers as the first row, and gives a consistent length to all rows
- *
- * If the input data is an array of objects, the function will detect the unique keys across all objects and use those as the column headers. If the input data is an array of arrays, they will simply be padded (mutated) as needed
- *
- * @param {[Object]} data - The input data to be converted to a CSV-like 2D array
- * @param {Array} [defaultHeaders=[]] - An optional array of default column headers. These will always be in the front, and newly discovered headers will be appended to the end
- * @returns {[Array]} - A 2D array representing the rows of data, with each row being an array of values.
- */
-export const rowify = (data, { defaultHeaders=[] }={}) => {
-    let rows = data
-    const headers = [...defaultHeaders]
-    rows = [headers]
-    for (const eachRow of data) {
-        if (eachRow instanceof Array) {
-            rows.push(eachRow)
-        } else {
-            for (const eachKey of Object.keys(eachRow)) {
-                if (!headers.includes(eachKey)) {
-                    headers.push(eachKey)
-                }
-            }
-            rows.push(
-                headers.map(eachKey=>eachRow[eachKey])
-            )
-        }
-    }
-    // pad out rows as needed
-    for (const eachRow of rows) {
-        while (eachRow.length < headers.length) {
-            eachRow.push(null)
-        }
-    }
-    return rows
-}
-
-/**
  * Converts an iterable of data into a typed CSV string
  *
  * @param {Iterable} data - The data to be converted to a CSV string. Must be a synchronous iterable (e.g. array, set, generator).
@@ -275,78 +215,17 @@ export const stringify = (data, { headers=[], delimiter=",", ...options }={}) =>
     return [...iterGenerateCsv(data, { headers, delimiter, ...options })].join("")
 }
 
-export function* iterCsvParse(csvString, { delimiter=",", warnings=true, ...options }={}) {
-    let row = []
-    if (csvString.trim().length == 0) {
-        throw Error(`Can't parse empty string`)
+function* iterGenerateCsv(data, { headers=[], delimiter=",", ...options }={}) {
+    if (!isSyncIterable(data)) {
+        throw new Error(`data must be an synchnous iterable (array, set, generator, etc), instead I got: ${toRepresentation(data)}`)
     }
-    if (typeof delimiter != "string" || delimiter.length !== 1) {
-        throw Error(`Delimiter must be a single character, instead got ${delimiter}`)
-    }
-    if (delimiter == "\n" || delimiter == "\r" || delimiter == '"') {
-        throw Error(`Delimiter must not be a newline or quote character`)
-    }
-    let lineIndex = 0
-    const simpleMatch = regex`^([^"${delimiter}\n\r]*)(${delimiter}|\r\n|\n|\r|$)`
-    const quoteMatch = regex`^[ \t]*"((?:[^"]|"")*)"[ \t]*(${delimiter}|\r\n|\n|\r|$)`
-    const borkedQuoteMatch = regex`^([^${delimiter}\n\r]*)(${delimiter}|\r\n|\n|\r|$)`
-    while (csvString.length > 0) {
-        let isQuote
-        let match
-        if (match = csvString.match(simpleMatch)) {
-            isQuote = false
-        } else if (match = csvString.match(quoteMatch)) {
-            isQuote = true
-        } else if (match = csvString.match(borkedQuoteMatch)) {
-            isQuote = false
-            if (warnings) {
-                console.warn(`Line ${lineIndex+1} has a quote but isnt a quoted entry (broken quote). Parsing as-if not quoted, Use {warnings: false} option to disable this warning`)
-            }
-        }
-        csvString = csvString.slice(match[0].length)
-        const stringContent = isQuote ? match[1].replace(/""/g, '"') : match[1]
-        row.push(stringContent)
-        const goToNextLine = !match[0].endsWith(",")
-        if (goToNextLine) {
-            lineIndex += 1
-            yield row
-            row = []
-        }
+    // require having a header, and they must be strings
+    yield ensureUniqueNames(headers).map(each=>csvEscapeCell(String(each))).join(delimiter)+"\n"
+    for (const row of data) {
+        yield [...row].map(each=>csvEscapeCell(stringifyCell(each, options))).join(delimiter)+"\n"
     }
 }
 
-export async function asyncParse(csvString, { delimiter=",", ...options }={}) {
-    
-    
-    const rows = await new Promise((resolve, reject) => {
-        csv.parse(csvString, { delimiter, ...options }, (err, output) => {
-            if (err) {
-                return reject(err)
-            }
-            resolve(output)
-        })
-    })
-    if (rows.length === 0) {
-        return {}
-    }
-    let headers
-    let output = {}
-    let index = -1
-    for (const eachRow of rows) {
-        index +=1
-        if (headers == null) {
-            headers = ensureUniqueNames(eachRow)
-            for (const each of headers) {
-                output[each] = Array(rows.length)
-            }
-            continue
-        }
-        for (const [value, header] of zip(eachRow, headers)) {
-            output[header][index] = typeResolve(value)
-        }
-    }
-    return output
-}
 
 // WIP: custom iterator-based CSV parser 
 // export const parse = (iterable, { delimiter=",", commentSymbol="#", ...options }={}) => {
@@ -386,7 +265,7 @@ export async function asyncParse(csvString, { delimiter=",", ...options }={}) {
 //         for (const each of eachRow) {
 //             index++
 //             try {
-//                 eachRow[index] = typeResolve(each)
+//                 eachRow[index] = parseCell(each)
 //             } catch (error) {
 //                 eachRow[index] = each
 //             }
@@ -395,23 +274,3 @@ export async function asyncParse(csvString, { delimiter=",", ...options }={}) {
 //     return rows
 // }
 
-const w3schoolsIsoDateRegex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
-const extraIsoDateRegex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/
-const simpleDateRegex = /^\d{4}-\d{1,2}-\d{1,2}($| |\t)/
-const matchesIso8601Date = (string)=>string.match(w3schoolsIsoDateRegex) || string.match(extraIsoDateRegex)
-const matchesReservedPattern = (string)=>{
-    return (
-        // to allow computed items / equations
-        string.startsWith("=") ||
-        // to allow regex (yeah yeah i know i know)
-        (string.startsWith("/") && string.match(/\/([igmusyv]*)$/)) ||
-        // default comment symbol
-        string.startsWith(/#/) ||
-        // to allow durations and times in the future
-        string.match(/^\d+:/) ||
-        // to allow dates (no times) either YYYY-MM-DD and DD/MM/YYYY (probably only want to support YYYY-MM-DD, but will reserve both)
-        string.match(simpleDateRegex) || string.match(/^\d{1,2}\/\d{1,2}\/\d{1,2}($| |\t)/) ||
-        // ISO date
-        matchesIso8601Date(string)
-    )
-}

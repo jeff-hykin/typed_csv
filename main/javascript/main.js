@@ -84,7 +84,7 @@ export const parseCell = (each)=>{
     }
 }
 
-export function* parseIter(csvString, { delimiter=",", warnings=true, asObject=true, ...options }={}) {
+export function* parseIter(csvString, { delimiter=",", warnings=true, asObjects=true, ...options }={}) {
     const iterable = iter(
         csvParseIter(csvString, { delimiter, ...options })
     )
@@ -120,7 +120,12 @@ export function* parseIter(csvString, { delimiter=",", warnings=true, asObject=t
         if (row == stop) {
             break
         }
-        if (asObject) {
+        let cellIndex = -1
+        for (const each of row) {
+            cellIndex +=1
+            row[cellIndex] = parseCell(each)
+        }
+        if (asObjects) {
             // even if the row is short, this zip methods will pad it out with undefineds
             for (const [rowValue, headerName] of zip(row, headers)) {
                 // values that are not under a named column will be ignored
@@ -132,29 +137,40 @@ export function* parseIter(csvString, { delimiter=",", warnings=true, asObject=t
                     continue
                 }
                 
-                row[headerName] = parseCell(rowValue)
+                row[headerName] = rowValue
             }
         }
         yield row
     }
 }
 
-export const parse = (csvString, { delimiter=",", warnings=true, asObject=true, ...options }={}) => {
-    const iterable = iter(
-        parseIter(csvString, { delimiter, warnings, asObject: false, ...options })
-    )
-    let headers = next(iterable) // error would already have been thrown if no headers
-    const outputObject = Object.fromEntries(headers.map(each=>[each, []]))
-    for (const row of iterable) {
-        // even if the row is short, this zip methods will pad it out with undefineds
-        for (const [rowValue, headerName] of zip(row, headers)) {
-            // values that are not under a named column will be ignored
-            if (headerName == undefined) {
-                // iter parser already warned about this
-                continue
+export const parse = (csvString, { delimiter=",", warnings=true, outputForm="rows", ...options }={}) => {
+    if (outputForm == "rows") {
+        const iterable = iter(
+            parseIter(csvString, { delimiter, warnings, ...options })
+        )
+        const headers = next(iterable) // error would already have been thrown if no headers
+        const rows = [...iterable]
+        return { headers, rows }
+    } else if (outputForm == "dataframe") {
+        const iterable = iter(
+            parseIter(csvString, { delimiter, warnings, asObjects: false, ...options })
+        )
+        const headers = next(iterable) // error would already have been thrown if no headers
+        const outputObject = Object.fromEntries(headers.map(each=>[each, []]))
+        for (const row of iterable) {
+            // even if the row is short, this zip methods will pad it out with undefineds
+            for (const [rowValue, headerName] of zip(row, headers)) {
+                // values that are not under a named column will be ignored
+                if (headerName == undefined) {
+                    // iter parser already warned about this
+                    continue
+                }
+                outputObject[headerName].push(rowValue)
             }
-            outputObject[headerName].push(parseCell(rowValue))
         }
+    } else {
+        throw new Error(`outputForm must be either "rows" or "dataframe". Instead I got: ${outputForm}`)
     }
     return outputObject
 }

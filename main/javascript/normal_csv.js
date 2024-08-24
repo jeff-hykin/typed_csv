@@ -29,47 +29,49 @@ export const csvEscapeCell = (stringData, delimiter=",")=>{
 
 export function* csvParseIter(csvString, { delimiter=",", warnings=true, commentSymbol="", ...options }={}) {
     let row = []
-    if (csvString.trim().length == 0) {
-        throw Error(`Can't parse empty string`)
+    if (typeof csvString != "string") {
+        throw Error(`Can't parse typeof ${typeof csvString}`)
     }
-    if (typeof delimiter != "string" || delimiter.length !== 1) {
-        throw Error(`Delimiter must be a single character, instead got ${delimiter}`)
-    }
-    if (delimiter == "\n" || delimiter == "\r" || delimiter == '"') {
-        throw Error(`Delimiter must not be a newline or quote character`)
-    }
-    let lineIndex = 0
-    const commentPattern = commentSymbol ? regex`^(${commentSymbol??""}).*(\r\n|\n|\r|$)` : null
-    const simplePattern = regex`^([^"${delimiter}\n\r]*)(${delimiter}|\r\n|\n|\r|$)`
-    const quotePattern = regex`^[ \t]*"((?:[^"]|"")*)"[ \t]*(${delimiter}|\r\n|\n|\r|$)`
-    const borkedQuotePattern = regex`^([^${delimiter}\n\r]*)(${delimiter}|\r\n|\n|\r|$)`
-    let startingAtNewline = true
-    while (csvString.length > 0) {
-        let isComment
-        let isQuote
-        let match
-        if (commentPattern && (match = csvString.match(commentPattern))) {
-            isComment = true
-        } else if (match = csvString.match(simplePattern)) {
-            isQuote = false
-        } else if (match = csvString.match(quotePattern)) {
-            isQuote = true
-        } else if (match = csvString.match(borkedQuotePattern)) {
-            isQuote = false
-            if (warnings) {
-                console.warn(`Line ${lineIndex+1} has a quote but isnt a quoted entry (broken quote). Parsing as-if not quoted, Use {warnings: false} option to disable this warning`)
+    if (csvString.trim().length != 0) {
+        if (typeof delimiter != "string" || delimiter.length !== 1) {
+            throw Error(`Delimiter must be a single character, instead got ${delimiter}`)
+        }
+        if (delimiter == "\n" || delimiter == "\r" || delimiter == '"') {
+            throw Error(`Delimiter must not be a newline or quote character`)
+        }
+        let lineIndex = 0
+        const commentPattern = commentSymbol ? regex`^(${commentSymbol??""}).*(\r\n|\n|\r|$)` : null
+        const simplePattern = regex`^([^"${delimiter}\n\r]*)(${delimiter}|\r\n|\n|\r|$)`
+        const quotePattern = regex`^[ \t]*"((?:[^"]|"")*)"[ \t]*(${delimiter}|\r\n|\n|\r|$)`
+        const borkedQuotePattern = regex`^([^${delimiter}\n\r]*)(${delimiter}|\r\n|\n|\r|$)`
+        let startingAtNewline = true
+        while (csvString.length > 0) {
+            let isComment
+            let isQuote
+            let match
+            if (commentPattern && (match = csvString.match(commentPattern))) {
+                isComment = true
+            } else if (match = csvString.match(simplePattern)) {
+                isQuote = false
+            } else if (match = csvString.match(quotePattern)) {
+                isQuote = true
+            } else if (match = csvString.match(borkedQuotePattern)) {
+                isQuote = false
+                if (warnings) {
+                    console.warn(`Line ${lineIndex+1} has a quote but isnt a quoted entry (broken quote). Parsing as-if not quoted, Use {warnings: false} option to disable this warning`)
+                }
             }
-        }
-        csvString = csvString.slice(match[0].length)
-        if (!isComment) {
-            const stringContent = isQuote ? match[1].replace(/""/g, '"') : match[1]
-            row.push(stringContent)
-        }
-        startingAtNewline = !match[0].endsWith(",")
-        if (startingAtNewline) {
-            lineIndex += 1
-            yield row
-            row = []
+            csvString = csvString.slice(match[0].length)
+            if (!isComment) {
+                const stringContent = isQuote ? match[1].replace(/""/g, '"') : match[1]
+                row.push(stringContent)
+            }
+            startingAtNewline = !match[0].endsWith(",")
+            if (startingAtNewline) {
+                lineIndex += 1
+                yield row
+                row = []
+            }
         }
     }
 }

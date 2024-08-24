@@ -7,6 +7,9 @@ import { lazyConcat } from "https://deno.land/x/good@1.7.1.1/flattened/lazy_conc
 import { regex } from "https://deno.land/x/good@1.7.1.1/flattened/regex.js"
 import { zip } from "https://deno.land/x/good@1.7.1.1/flattened/zip.js"
 import { toRepresentation } from "https://deno.land/x/good@1.7.1.1/flattened/to_representation.js"
+import { Parser, parserFromWasm } from "https://deno.land/x/deno_tree_sitter@0.2.5.1/main.js"
+import yaml from "https://github.com/jeff-hykin/common_tree_sitter_languages/raw/a1c34a3a73a173f82657e25468efc76e9e593843/main/yaml.js"
+const yamlParser = await parserFromWasm(yaml)
 
 import { ensureUniqueNames, rowify } from "./helpers.js"
 import { csvParseIter, csvEscapeCell } from "./normal_csv.js"
@@ -75,11 +78,19 @@ export const parseCell = (each)=>{
     }
     // NOTE: durations and times-of-day are not supported in the JS implmentation
     
+
     // everything else (numbers, boolean, strings, lists, mappings)
-    try {
-        return yaml.parse(each)
-    } catch (error) {
-        // failure to parse means its a string literal
+
+    // if there is no comment, then we can use yaml parsing (first part is just a computationally cheap check)
+    if (!each.includes("#") || !yamlParser.parse(each).rootNode.quickQueryFirst("(comment)")) {
+        try {
+            return yaml.parse(each)
+        } catch (error) {
+            // failure to parse means its a string literal
+            return each
+        }
+    // if there is a yaml comment, we avoid yaml parsing as it would destroy the comment. Ex: "account #" => "account"
+    } else {
         return each
     }
 }

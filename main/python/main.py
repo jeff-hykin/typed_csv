@@ -65,6 +65,7 @@ def parse_cell(each):
 
     # everything else (numbers, boolean, strings, lists, mappings)
     try:
+        # FIXME: need to check if there is a yaml comment (and skip parsing if there is)
         return ez_yaml.to_obj(string=trim)
     except:
         # failure to parse means it's a string literal

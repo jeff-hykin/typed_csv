@@ -32,13 +32,13 @@ export function* csvParseIter(csvString, { delimiter=",", warnings=true, comment
     if (typeof csvString != "string") {
         throw Error(`Can't parse typeof ${typeof csvString}`)
     }
+    if (typeof delimiter != "string" || delimiter.length !== 1) {
+        throw Error(`Delimiter must be a single character, instead got ${delimiter}`)
+    }
+    if (delimiter == "\n" || delimiter == "\r" || delimiter == '"') {
+        throw Error(`Delimiter must not be a newline or quote character`)
+    }
     if (csvString.trim().length != 0) {
-        if (typeof delimiter != "string" || delimiter.length !== 1) {
-            throw Error(`Delimiter must be a single character, instead got ${delimiter}`)
-        }
-        if (delimiter == "\n" || delimiter == "\r" || delimiter == '"') {
-            throw Error(`Delimiter must not be a newline or quote character`)
-        }
         let lineIndex = 0
         const commentPattern = commentSymbol ? regex`^(${commentSymbol??""}).*(\r\n|\n|\r|$)` : null
         const simplePattern = regex`^([^"${delimiter}\n\r]*)(${delimiter}|\r\n|\n|\r|$)`
@@ -61,6 +61,7 @@ export function* csvParseIter(csvString, { delimiter=",", warnings=true, comment
                     console.warn(`Line ${lineIndex+1} has a quote but isnt a quoted entry (broken quote). Parsing as-if not quoted, Use {warnings: false} option to disable this warning`)
                 }
             }
+            
             csvString = csvString.slice(match[0].length)
             if (!isComment) {
                 const stringContent = isQuote ? match[1].replace(/""/g, '"') : match[1]

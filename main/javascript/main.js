@@ -1,4 +1,5 @@
 import * as yaml from "https://deno.land/std@0.168.0/encoding/yaml.ts"
+// import * as yaml from "./yaml.ignore.js"
 import { isSyncIterable } from "https://deno.land/x/good@1.7.1.1/flattened/is_sync_iterable.js"
 import { iter } from "https://deno.land/x/good@1.7.1.1/flattened/iter.js"
 import { stop } from "https://deno.land/x/good@1.7.1.1/flattened/stop_symbol.js"
@@ -254,7 +255,7 @@ export const stringifyCell = (each, options={})=>{
     }
     // remaining non-strings just get yamlified
     if (typeof each != "string") {
-        let newString = yaml.stringify(each, { collectionStyle: 'flow', ...options.yamlOptions })
+        let newString = yaml.stringify(each, { collectionStyle: 'flow', lineWidth: Infinity, ...options.yamlOptions })
         // remove trailing newline (which is always a safe operation)
         if (newString[newString.length-1] == "\n") {
             newString = newString.slice(0,-1)
@@ -270,7 +271,7 @@ export const stringifyCell = (each, options={})=>{
         return JSON.stringify(each)
     }
     // otherwise rely on yaml to quote it correctly or make it a block-string
-    const asString = yaml.stringify(each)
+    const asString = yaml.stringify(each, { collectionStyle: 'flow', lineWidth: Infinity, ...options.yamlOptions })
     if ((asString.startsWith('"') || asString.startsWith("'")) && asString.endsWith("\n")) {
         return asString.slice(0,-1)
     } else {

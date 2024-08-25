@@ -1,5 +1,3 @@
-// import * as csv from "csv/dist/esm/index.js"
-import * as yaml from "https://deno.land/std@0.168.0/encoding/yaml.ts"
 import { isSyncIterable } from "https://deno.land/x/good@1.7.1.1/flattened/is_sync_iterable.js"
 import { iter } from "https://deno.land/x/good@1.7.1.1/flattened/iter.js"
 import { stop } from "https://deno.land/x/good@1.7.1.1/flattened/stop_symbol.js"
@@ -21,7 +19,7 @@ import { toRepresentation } from "https://deno.land/x/good@1.7.1.1/flattened/to_
  */
 export const csvEscapeCell = (stringData, delimiter=",")=>{
     if (stringData.includes(delimiter) || stringData.includes("\n") || stringData.includes("\r") || stringData.includes("\"")) {
-        return stringData.replace(/\"/g, '""')
+        return `"${stringData.replace(/"/g, '""')}"`
     } else {
         return stringData
     }

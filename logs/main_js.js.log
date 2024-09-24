@@ -33,7 +33,7 @@
             null,
             "example-label",
             0.95,
-            "testing howdy",
+            "https://www.youtube.com/watch?v=Mng81w5VIzo&list=PLnogPmPzL4RbKc6Nm9SoVxHEpTHqAUack\nhowdy\n\"\n",
             null
         ],
         [
@@ -95,7 +95,11 @@
     ]
 }
 uploadAction,observationId,(type),videoId,startTime,endTime,observer,isHuman,(confirmedBySomeone),(rejectedBySomeone),confirmedBy,rejectedBy,label,labelConfidence,comment,spacialInfo
-update,'1719457772468.04096585523367635',marker,yob91d1jwtq,0.501,0.501,jeff.hykin@gmail.com,true,false,false,,,example-label,0.95,testing howdy,
+update,'1719457772468.04096585523367635',marker,yob91d1jwtq,0.501,0.501,jeff.hykin@gmail.com,true,false,false,,,example-label,0.95,"|
+  https://www.youtube.com/watch?v=Mng81w5VIzo&list=PLnogPmPzL4RbKc6Nm9SoVxHEpTHqAUack
+  howdy
+  ""
+",
 update,'1719468610008.5903692211880256',marker,fajlfj430,0,0,jeff.hykin@gmail.com,true,false,false,,,example-label,0.95,,
 update,'1719469792319.6174455839357319',marker,fajlfj430,1.149,1.149,jeff.hykin@gmail.com,true,false,true,,- jeff.hykin@gmail.com,example-label12,0.95,,
 update,'1720713953165.4361996203248599',marker,39tbp74ntvx,0,0,jeff.hykin@gmail.com,true,false,false,,,example-label12,0.95,,

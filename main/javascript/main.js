@@ -8,7 +8,7 @@ import { lazyConcat } from "https://deno.land/x/good@1.7.1.1/flattened/lazy_conc
 import { regex } from "https://deno.land/x/good@1.7.1.1/flattened/regex.js"
 import { zip } from "https://deno.land/x/good@1.7.1.1/flattened/zip.js"
 import { toRepresentation } from "https://deno.land/x/good@1.7.1.1/flattened/to_representation.js"
-import { Parser, parserFromWasm } from "https://deno.land/x/deno_tree_sitter@0.2.5.1/main.js"
+import { Parser, parserFromWasm } from "https://deno.land/x/deno_tree_sitter@0.2.5.2/main.js"
 import yamlWasmParser from "https://github.com/jeff-hykin/common_tree_sitter_languages/raw/a1c34a3a73a173f82657e25468efc76e9e593843/main/yaml.js"
 const yamlParser = await parserFromWasm(yamlWasmParser)
 

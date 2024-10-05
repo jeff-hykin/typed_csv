@@ -271,8 +271,14 @@ export const stringifyCell = (each, options={alwaysEscapeNewlines:false})=>{
     // 
     // we must determine if the string needs quotes 
     // if its a string that wouldn't be quoted by yaml, but should be reserved for special things (like date), then quote it manually
-    if (matchesReservedPattern(each)) {
-        return JSON.stringify(each)
+    if (matchesReservedPattern(each) || each.match(/^[0-9\.eE\-\+]+$/)) {
+        const output = JSON.stringify(each)
+        const inner = output.slice(1,-1)
+        if (!inner.includes("'")) {
+            return `'${inner}'`
+        } else {
+            return output
+        }
     }
     // otherwise rely on yaml to quote it correctly or make it a block-string
     let asString = yaml.stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions })

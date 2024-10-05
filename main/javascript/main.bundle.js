@@ -2,8 +2,7 @@ var __defProp = Object.defineProperty;
 var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
   get: (a2, b) => (typeof require !== "undefined" ? require : a2)[b]
 }) : x)(function(x) {
-  if (typeof require !== "undefined")
-    return require.apply(this, arguments);
+  if (typeof require !== "undefined") return require.apply(this, arguments);
   throw Error('Dynamic require of "' + x + '" is not supported');
 });
 var __export = (target, all) => {
@@ -51,8 +50,7 @@ var Mark = class {
     this.column = column;
   }
   getSnippet(indent2 = 4, maxLength2 = 75) {
-    if (!this.buffer)
-      return null;
+    if (!this.buffer) return null;
     let head = "";
     let start2 = this.position;
     while (start2 > 0 && "\0\r\n\u2028\u2029".indexOf(this.buffer.charAt(start2 - 1)) === -1) {
@@ -253,8 +251,7 @@ var Buffer2 = class {
    * @param [options={ copy: true }]
    */
   bytes(options = { copy: true }) {
-    if (options.copy === false)
-      return this.#buf.subarray(this.#off);
+    if (options.copy === false) return this.#buf.subarray(this.#off);
     return this.#buf.slice(this.#off);
   }
   /** Returns whether the unread portion of the buffer is empty. */
@@ -388,10 +385,8 @@ var Buffer2 = class {
       if (nread === null) {
         return n2;
       }
-      if (shouldGrow)
-        this.writeSync(buf.subarray(0, nread));
-      else
-        this.#reslice(this.length + nread);
+      if (shouldGrow) this.writeSync(buf.subarray(0, nread));
+      else this.#reslice(this.length + nread);
       n2 += nread;
     }
   }
@@ -411,10 +406,8 @@ var Buffer2 = class {
       if (nread === null) {
         return n2;
       }
-      if (shouldGrow)
-        this.writeSync(buf.subarray(0, nread));
-      else
-        this.#reslice(this.length + nread);
+      if (shouldGrow) this.writeSync(buf.subarray(0, nread));
+      else this.#reslice(this.length + nread);
       n2 += nread;
     }
   }
@@ -423,18 +416,15 @@ var Buffer2 = class {
 // https://deno.land/std@0.168.0/encoding/_yaml/type/binary.ts
 var BASE64_MAP = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\n\r";
 function resolveYamlBinary(data) {
-  if (data === null)
-    return false;
+  if (data === null) return false;
   let code;
   let bitlen = 0;
   const max = data.length;
   const map2 = BASE64_MAP;
   for (let idx = 0; idx < max; idx++) {
     code = map2.indexOf(data.charAt(idx));
-    if (code > 64)
-      continue;
-    if (code < 0)
-      return false;
+    if (code > 64) continue;
+    if (code < 0) return false;
     bitlen += 6;
   }
   return bitlen % 8 === 0;
@@ -505,8 +495,7 @@ function isBinary(obj) {
   }
   const buf = new Buffer2();
   try {
-    if (0 > buf.readFromSync(obj))
-      return true;
+    if (0 > buf.readFromSync(obj)) return true;
     return false;
   } catch {
     return false;
@@ -687,24 +676,20 @@ function resolveYamlInteger(data) {
   const max = data.length;
   let index = 0;
   let hasDigits = false;
-  if (!max)
-    return false;
+  if (!max) return false;
   let ch = data[index];
   if (ch === "-" || ch === "+") {
     ch = data[++index];
   }
   if (ch === "0") {
-    if (index + 1 === max)
-      return true;
+    if (index + 1 === max) return true;
     ch = data[++index];
     if (ch === "b") {
       index++;
       for (; index < max; index++) {
         ch = data[index];
-        if (ch === "_")
-          continue;
-        if (ch !== "0" && ch !== "1")
-          return false;
+        if (ch === "_") continue;
+        if (ch !== "0" && ch !== "1") return false;
         hasDigits = true;
       }
       return hasDigits && ch !== "_";
@@ -713,41 +698,32 @@ function resolveYamlInteger(data) {
       index++;
       for (; index < max; index++) {
         ch = data[index];
-        if (ch === "_")
-          continue;
-        if (!isHexCode(data.charCodeAt(index)))
-          return false;
+        if (ch === "_") continue;
+        if (!isHexCode(data.charCodeAt(index))) return false;
         hasDigits = true;
       }
       return hasDigits && ch !== "_";
     }
     for (; index < max; index++) {
       ch = data[index];
-      if (ch === "_")
-        continue;
-      if (!isOctCode(data.charCodeAt(index)))
-        return false;
+      if (ch === "_") continue;
+      if (!isOctCode(data.charCodeAt(index))) return false;
       hasDigits = true;
     }
     return hasDigits && ch !== "_";
   }
-  if (ch === "_")
-    return false;
+  if (ch === "_") return false;
   for (; index < max; index++) {
     ch = data[index];
-    if (ch === "_")
-      continue;
-    if (ch === ":")
-      break;
+    if (ch === "_") continue;
+    if (ch === ":") break;
     if (!isDecCode(data.charCodeAt(index))) {
       return false;
     }
     hasDigits = true;
   }
-  if (!hasDigits || ch === "_")
-    return false;
-  if (ch !== ":")
-    return true;
+  if (!hasDigits || ch === "_") return false;
+  if (ch !== ":") return true;
   return /^(:[0-5]?[0-9])+$/.test(data.slice(index));
 }
 function constructYamlInteger(data) {
@@ -759,18 +735,14 @@ function constructYamlInteger(data) {
   let sign = 1;
   let ch = value[0];
   if (ch === "-" || ch === "+") {
-    if (ch === "-")
-      sign = -1;
+    if (ch === "-") sign = -1;
     value = value.slice(1);
     ch = value[0];
   }
-  if (value === "0")
-    return 0;
+  if (value === "0") return 0;
   if (ch === "0") {
-    if (value[1] === "b")
-      return sign * parseInt(value.slice(2), 2);
-    if (value[1] === "x")
-      return sign * parseInt(value, 16);
+    if (value[1] === "b") return sign * parseInt(value.slice(2), 2);
+    if (value[1] === "x") return sign * parseInt(value, 16);
     return sign * parseInt(value, 8);
   }
   if (value.indexOf(":") !== -1) {
@@ -877,22 +849,16 @@ function resolveYamlOmap(data) {
   let pairHasKey = false;
   for (const pair of data) {
     pairHasKey = false;
-    if (_toString.call(pair) !== "[object Object]")
-      return false;
+    if (_toString.call(pair) !== "[object Object]") return false;
     for (pairKey in pair) {
       if (hasOwn(pair, pairKey)) {
-        if (!pairHasKey)
-          pairHasKey = true;
-        else
-          return false;
+        if (!pairHasKey) pairHasKey = true;
+        else return false;
       }
     }
-    if (!pairHasKey)
-      return false;
-    if (objectKeys.indexOf(pairKey) === -1)
-      objectKeys.push(pairKey);
-    else
-      return false;
+    if (!pairHasKey) return false;
+    if (objectKeys.indexOf(pairKey) === -1) objectKeys.push(pairKey);
+    else return false;
   }
   return true;
 }
@@ -911,18 +877,15 @@ function resolveYamlPairs(data) {
   const result = Array.from({ length: data.length });
   for (let index = 0; index < data.length; index++) {
     const pair = data[index];
-    if (_toString2.call(pair) !== "[object Object]")
-      return false;
+    if (_toString2.call(pair) !== "[object Object]") return false;
     const keys = Object.keys(pair);
-    if (keys.length !== 1)
-      return false;
+    if (keys.length !== 1) return false;
     result[index] = [keys[0], pair[keys[0]]];
   }
   return true;
 }
 function constructYamlPairs(data) {
-  if (data === null)
-    return [];
+  if (data === null) return [];
   const result = Array.from({ length: data.length });
   for (let index = 0; index < data.length; index += 1) {
     const pair = data[index];
@@ -980,12 +943,10 @@ var seq = new Type("tag:yaml.org,2002:seq", {
 // https://deno.land/std@0.168.0/encoding/_yaml/type/set.ts
 var { hasOwn: hasOwn2 } = Object;
 function resolveYamlSet(data) {
-  if (data === null)
-    return true;
+  if (data === null) return true;
   for (const key in data) {
     if (hasOwn2(data, key)) {
-      if (data[key] !== null)
-        return false;
+      if (data[key] !== null) return false;
     }
   }
   return true;
@@ -1017,20 +978,15 @@ var YAML_TIMESTAMP_REGEXP = new RegExp(
   // [11] tz_minute
 );
 function resolveYamlTimestamp(data) {
-  if (data === null)
-    return false;
-  if (YAML_DATE_REGEXP.exec(data) !== null)
-    return true;
-  if (YAML_TIMESTAMP_REGEXP.exec(data) !== null)
-    return true;
+  if (data === null) return false;
+  if (YAML_DATE_REGEXP.exec(data) !== null) return true;
+  if (YAML_TIMESTAMP_REGEXP.exec(data) !== null) return true;
   return false;
 }
 function constructYamlTimestamp(data) {
   let match = YAML_DATE_REGEXP.exec(data);
-  if (match === null)
-    match = YAML_TIMESTAMP_REGEXP.exec(data);
-  if (match === null)
-    throw new Error("Date resolve error");
+  if (match === null) match = YAML_TIMESTAMP_REGEXP.exec(data);
+  if (match === null) throw new Error("Date resolve error");
   const year = +match[1];
   const month = +match[2] - 1;
   const day = +match[3];
@@ -1053,14 +1009,12 @@ function constructYamlTimestamp(data) {
     const tzHour = +match[10];
     const tzMinute = +(match[11] || 0);
     delta = (tzHour * 60 + tzMinute) * 6e4;
-    if (match[9] === "-")
-      delta = -delta;
+    if (match[9] === "-") delta = -delta;
   }
   const date = new Date(
     Date.UTC(year, month, day, hour, minute, second, fraction)
   );
-  if (delta)
-    date.setTime(date.getTime() - delta);
+  if (delta) date.setTime(date.getTime() - delta);
   return date;
 }
 function representYamlTimestamp(date) {
@@ -2029,8 +1983,7 @@ function readBlockMapping(state, nodeIndent, flowIndent) {
 function readTagProperty(state) {
   let position, isVerbatim = false, isNamed = false, tagHandle = "", tagName, ch;
   ch = state.input.charCodeAt(state.position);
-  if (ch !== 33)
-    return false;
+  if (ch !== 33) return false;
   if (state.tag !== null) {
     return throwError(state, "duplication of a tag property");
   }
@@ -2110,8 +2063,7 @@ function readTagProperty(state) {
 }
 function readAnchorProperty(state) {
   let ch = state.input.charCodeAt(state.position);
-  if (ch !== 38)
-    return false;
+  if (ch !== 38) return false;
   if (state.anchor !== null) {
     return throwError(state, "duplication of an anchor property");
   }
@@ -2131,8 +2083,7 @@ function readAnchorProperty(state) {
 }
 function readAlias(state) {
   let ch = state.input.charCodeAt(state.position);
-  if (ch !== 42)
-    return false;
+  if (ch !== 42) return false;
   ch = state.input.charCodeAt(++state.position);
   const _position = state.position;
   while (ch !== 0 && !isWsOrEol(ch) && !isFlowIndicator(ch)) {
@@ -2306,16 +2257,14 @@ function readDocument(state) {
         } while (ch !== 0 && !isEOL(ch));
         break;
       }
-      if (isEOL(ch))
-        break;
+      if (isEOL(ch)) break;
       position = state.position;
       while (ch !== 0 && !isWsOrEol(ch)) {
         ch = state.input.charCodeAt(++state.position);
       }
       directiveArgs.push(state.input.slice(position, state.position));
     }
-    if (ch !== 0)
-      readLineBreak(state);
+    if (ch !== 0) readLineBreak(state);
     if (hasOwn3(directiveHandlers, directiveName)) {
       directiveHandlers[directiveName](state, directiveName, ...directiveArgs);
     } else {
@@ -2396,8 +2345,7 @@ function parse(content, options) {
 // https://deno.land/std@0.168.0/encoding/_yaml/dumper/dumper_state.ts
 var { hasOwn: hasOwn4 } = Object;
 function compileStyleMap(schema, map2) {
-  if (typeof map2 === "undefined" || map2 === null)
-    return {};
+  if (typeof map2 === "undefined" || map2 === null) return {};
   let type;
   const result = {};
   const keys = Object.keys(map2);
@@ -2555,8 +2503,7 @@ function indentString(string, spaces) {
       line = string.slice(position, next2 + 1);
       position = next2 + 1;
     }
-    if (line.length && line !== "\n")
-      result += ind;
+    if (line.length && line !== "\n") result += ind;
     result += line;
   }
   return result;
@@ -2641,8 +2588,7 @@ function chooseScalarStyle(string, singleLineOnly, indentPerLevel, lineWidth, te
   return hasFoldableLine ? STYLE_FOLDED : STYLE_LITERAL;
 }
 function foldLine(line, width) {
-  if (line === "" || line[0] === " ")
-    return line;
+  if (line === "" || line[0] === " ") return line;
   const breakRe = / [^ ]/g;
   let match;
   let start2 = 0, end, curr = 0, next2 = 0;
@@ -2763,8 +2709,7 @@ function writeFlowSequence(state, level, object) {
   const _tag = state.tag;
   for (let index = 0, length = object.length; index < length; index += 1) {
     if (writeNode(state, level, object[index], false, false)) {
-      if (index !== 0)
-        _result += `,${!state.condenseFlow ? " " : ""}`;
+      if (index !== 0) _result += `,${!state.condenseFlow ? " " : ""}`;
       _result += state.dump;
     }
   }
@@ -2796,15 +2741,13 @@ function writeFlowMapping(state, level, object) {
   let pairBuffer, objectKey, objectValue;
   for (let index = 0, length = objectKeyList.length; index < length; index += 1) {
     pairBuffer = state.condenseFlow ? '"' : "";
-    if (index !== 0)
-      pairBuffer += ", ";
+    if (index !== 0) pairBuffer += ", ";
     objectKey = objectKeyList[index];
     objectValue = object[objectKey];
     if (!writeNode(state, level, objectKey, false, false)) {
       continue;
     }
-    if (state.dump.length > 1024)
-      pairBuffer += "? ";
+    if (state.dump.length > 1024) pairBuffer += "? ";
     pairBuffer += `${state.dump}${state.condenseFlow ? '"' : ""}:${state.condenseFlow ? "" : " "}`;
     if (!writeNode(state, level, objectValue, false, false)) {
       continue;
@@ -2948,8 +2891,7 @@ function writeNode(state, level, object, block, compact, iskey = false) {
         writeScalar(state, state.dump, level, iskey);
       }
     } else {
-      if (state.skipInvalid)
-        return false;
+      if (state.skipInvalid) return false;
       throw new YAMLError(`unacceptable kind of an object to dump ${type}`);
     }
     if (state.tag !== null && state.tag !== "?") {
@@ -2992,10 +2934,8 @@ function getDuplicateReferences(object, state) {
 function dump(input, options) {
   options = options || {};
   const state = new DumperState(options);
-  if (!state.noRefs)
-    getDuplicateReferences(input, state);
-  if (writeNode(state, 0, input, true, true))
-    return `${state.dump}
+  if (!state.noRefs) getDuplicateReferences(input, state);
+  if (writeNode(state, 0, input, true, true)) return `${state.dump}
 `;
   return "";
 }
@@ -3011,7 +2951,7 @@ var isSyncIterable = function(value) {
 };
 
 // https://deno.land/x/good@1.7.1.1/flattened/empty_iterator.js
-var emptyIterator = /* @__PURE__ */ function* () {
+var emptyIterator = function* () {
 }();
 
 // https://deno.land/x/good@1.7.1.1/flattened/make_iterable.js
@@ -5996,22 +5936,17 @@ var {
 
 // https://deno.land/std@0.177.0/node/internal/normalize_encoding.mjs
 function normalizeEncoding(enc) {
-  if (enc == null || enc === "utf8" || enc === "utf-8")
-    return "utf8";
+  if (enc == null || enc === "utf8" || enc === "utf-8") return "utf8";
   return slowCases(enc);
 }
 function slowCases(enc) {
   switch (enc.length) {
     case 4:
-      if (enc === "UTF8")
-        return "utf8";
-      if (enc === "ucs2" || enc === "UCS2")
-        return "utf16le";
+      if (enc === "UTF8") return "utf8";
+      if (enc === "ucs2" || enc === "UCS2") return "utf16le";
       enc = `${enc}`.toLowerCase();
-      if (enc === "utf8")
-        return "utf8";
-      if (enc === "ucs2")
-        return "utf16le";
+      if (enc === "utf8") return "utf8";
+      if (enc === "ucs2") return "utf16le";
       break;
     case 3:
       if (enc === "hex" || enc === "HEX" || `${enc}`.toLowerCase() === "hex") {
@@ -6019,38 +5954,24 @@ function slowCases(enc) {
       }
       break;
     case 5:
-      if (enc === "ascii")
-        return "ascii";
-      if (enc === "ucs-2")
-        return "utf16le";
-      if (enc === "UTF-8")
-        return "utf8";
-      if (enc === "ASCII")
-        return "ascii";
-      if (enc === "UCS-2")
-        return "utf16le";
+      if (enc === "ascii") return "ascii";
+      if (enc === "ucs-2") return "utf16le";
+      if (enc === "UTF-8") return "utf8";
+      if (enc === "ASCII") return "ascii";
+      if (enc === "UCS-2") return "utf16le";
       enc = `${enc}`.toLowerCase();
-      if (enc === "utf-8")
-        return "utf8";
-      if (enc === "ascii")
-        return "ascii";
-      if (enc === "ucs-2")
-        return "utf16le";
+      if (enc === "utf-8") return "utf8";
+      if (enc === "ascii") return "ascii";
+      if (enc === "ucs-2") return "utf16le";
       break;
     case 6:
-      if (enc === "base64")
-        return "base64";
-      if (enc === "latin1" || enc === "binary")
-        return "latin1";
-      if (enc === "BASE64")
-        return "base64";
-      if (enc === "LATIN1" || enc === "BINARY")
-        return "latin1";
+      if (enc === "base64") return "base64";
+      if (enc === "latin1" || enc === "binary") return "latin1";
+      if (enc === "BASE64") return "base64";
+      if (enc === "LATIN1" || enc === "BINARY") return "latin1";
       enc = `${enc}`.toLowerCase();
-      if (enc === "base64")
-        return "base64";
-      if (enc === "latin1" || enc === "binary")
-        return "latin1";
+      if (enc === "base64") return "base64";
+      if (enc === "latin1" || enc === "binary") return "latin1";
       break;
     case 7:
       if (enc === "utf16le" || enc === "UTF16LE" || `${enc}`.toLowerCase() === "utf16le") {
@@ -6068,8 +5989,7 @@ function slowCases(enc) {
       }
       break;
     default:
-      if (enc === "")
-        return "utf8";
+      if (enc === "") return "utf8";
   }
 }
 
@@ -6377,6 +6297,7 @@ function uvTranslateSysError(sysErrno) {
       return "EACCES";
     case WSAEACCES:
       return "EACCES";
+    // case winErrors.ERROR_ELEVATION_REQUIRED:          return "EACCES";
     case ERROR_CANT_ACCESS_FILE:
       return "EACCES";
     case ERROR_ADDRESS_ALREADY_ASSOCIATED:
@@ -6439,6 +6360,7 @@ function uvTranslateSysError(sysErrno) {
       return "EINVAL";
     case ERROR_INVALID_PARAMETER:
       return "EINVAL";
+    // case winErrors.ERROR_SYMLINK_NOT_SUPPORTED:       return "EINVAL";
     case WSAEINVAL:
       return "EINVAL";
     case WSAEPFNOSUPPORT:
@@ -6943,27 +6865,21 @@ function intoCallbackAPIWithIntercept(func3, interceptor, cb, ...args2) {
   );
 }
 function spliceOne(list, index) {
-  for (; index + 1 < list.length; index++)
-    list[index] = list[index + 1];
+  for (; index + 1 < list.length; index++) list[index] = list[index + 1];
   list.pop();
 }
 function normalizeEncoding2(enc) {
-  if (enc == null || enc === "utf8" || enc === "utf-8")
-    return "utf8";
+  if (enc == null || enc === "utf8" || enc === "utf-8") return "utf8";
   return slowCases2(enc);
 }
 function slowCases2(enc) {
   switch (enc.length) {
     case 4:
-      if (enc === "UTF8")
-        return "utf8";
-      if (enc === "ucs2" || enc === "UCS2")
-        return "utf16le";
+      if (enc === "UTF8") return "utf8";
+      if (enc === "ucs2" || enc === "UCS2") return "utf16le";
       enc = `${enc}`.toLowerCase();
-      if (enc === "utf8")
-        return "utf8";
-      if (enc === "ucs2")
-        return "utf16le";
+      if (enc === "utf8") return "utf8";
+      if (enc === "ucs2") return "utf16le";
       break;
     case 3:
       if (enc === "hex" || enc === "HEX" || `${enc}`.toLowerCase() === "hex") {
@@ -6971,38 +6887,24 @@ function slowCases2(enc) {
       }
       break;
     case 5:
-      if (enc === "ascii")
-        return "ascii";
-      if (enc === "ucs-2")
-        return "utf16le";
-      if (enc === "UTF-8")
-        return "utf8";
-      if (enc === "ASCII")
-        return "ascii";
-      if (enc === "UCS-2")
-        return "utf16le";
+      if (enc === "ascii") return "ascii";
+      if (enc === "ucs-2") return "utf16le";
+      if (enc === "UTF-8") return "utf8";
+      if (enc === "ASCII") return "ascii";
+      if (enc === "UCS-2") return "utf16le";
       enc = `${enc}`.toLowerCase();
-      if (enc === "utf-8")
-        return "utf8";
-      if (enc === "ascii")
-        return "ascii";
-      if (enc === "ucs-2")
-        return "utf16le";
+      if (enc === "utf-8") return "utf8";
+      if (enc === "ascii") return "ascii";
+      if (enc === "ucs-2") return "utf16le";
       break;
     case 6:
-      if (enc === "base64")
-        return "base64";
-      if (enc === "latin1" || enc === "binary")
-        return "latin1";
-      if (enc === "BASE64")
-        return "base64";
-      if (enc === "LATIN1" || enc === "BINARY")
-        return "latin1";
+      if (enc === "base64") return "base64";
+      if (enc === "latin1" || enc === "binary") return "latin1";
+      if (enc === "BASE64") return "base64";
+      if (enc === "LATIN1" || enc === "BINARY") return "latin1";
       enc = `${enc}`.toLowerCase();
-      if (enc === "base64")
-        return "base64";
-      if (enc === "latin1" || enc === "binary")
-        return "latin1";
+      if (enc === "base64") return "base64";
+      if (enc === "latin1" || enc === "binary") return "latin1";
       break;
     case 7:
       if (enc === "utf16le" || enc === "UTF16LE" || `${enc}`.toLowerCase() === "utf16le") {
@@ -7015,8 +6917,7 @@ function slowCases2(enc) {
       }
       break;
     default:
-      if (enc === "")
-        return "utf8";
+      if (enc === "") return "utf8";
   }
 }
 var NumberIsSafeInteger = Number.isSafeInteger;
@@ -7032,8 +6933,7 @@ function getSystemErrorName(code) {
 
 // https://deno.land/std@0.177.0/node/_fs/_fs_common.ts
 function isFileOptions(fileOptions) {
-  if (!fileOptions)
-    return false;
+  if (!fileOptions) return false;
   return fileOptions.encoding != void 0 || fileOptions.flag != void 0 || fileOptions.signal != void 0 || fileOptions.mode != void 0;
 }
 function getEncoding(optOrCallback) {
@@ -7041,16 +6941,13 @@ function getEncoding(optOrCallback) {
     return null;
   }
   const encoding = typeof optOrCallback === "string" ? optOrCallback : optOrCallback.encoding;
-  if (!encoding)
-    return null;
+  if (!encoding) return null;
   return encoding;
 }
 function checkEncoding(encoding) {
-  if (!encoding)
-    return null;
+  if (!encoding) return null;
   encoding = encoding.toLowerCase();
-  if (["utf8", "hex", "base64"].includes(encoding))
-    return encoding;
+  if (["utf8", "hex", "base64"].includes(encoding)) return encoding;
   if (encoding === "utf-8") {
     return "utf8";
   }
@@ -7223,8 +7120,7 @@ function indexOfNeedle(source, needle, start2 = 0) {
   }
   const s2 = needle[0];
   for (let i2 = start2; i2 < source.length; i2++) {
-    if (source[i2] !== s2)
-      continue;
+    if (source[i2] !== s2) continue;
     const pin = i2;
     let matched = 1;
     let j2 = i2;
@@ -7244,8 +7140,7 @@ function indexOfNeedle(source, needle, start2 = 0) {
 
 // https://deno.land/std@0.177.0/node/internal_binding/buffer.ts
 function numberToBytes(n2) {
-  if (n2 === 0)
-    return new Uint8Array([0]);
+  if (n2 === 0) return new Uint8Array([0]);
   const bytes = [];
   bytes.unshift(n2 & 255);
   while (n2 >= 256) {
@@ -7281,8 +7176,7 @@ function findLastIndex(targetBuffer, buffer, offset) {
       break;
     }
   }
-  if (index === -1)
-    return index;
+  if (index === -1) return index;
   return searchableBufferLastIndex - index;
 }
 function indexOfBuffer(targetBuffer, buffer, byteOffset, encoding, forwardDirection) {
@@ -7420,10 +7314,8 @@ function decode(b64) {
 
 // https://deno.land/std@0.177.0/encoding/base64url.ts
 function addPaddingToBase64url(base64url) {
-  if (base64url.length % 4 === 2)
-    return base64url + "==";
-  if (base64url.length % 4 === 3)
-    return base64url + "=";
+  if (base64url.length % 4 === 2) return base64url + "==";
+  if (base64url.length % 4 === 3) return base64url + "=";
   if (base64url.length % 4 === 1) {
     throw new TypeError("Illegal base64url string!");
   }
@@ -7462,8 +7354,7 @@ var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g;
 function base64clean(str2) {
   str2 = str2.split("=")[0];
   str2 = str2.trim().replace(INVALID_BASE64_RE, "");
-  if (str2.length < 2)
-    return "";
+  if (str2.length < 2) return "";
   while (str2.length % 4 !== 0) {
     str2 = str2 + "=";
   }
@@ -7852,8 +7743,7 @@ function getUserOptions(ctx, isCrossContext) {
         stylized = `${ctx.stylize(value, flavour)}`;
       } catch {
       }
-      if (typeof stylized !== "string")
-        return value;
+      if (typeof stylized !== "string") return value;
       return stylized;
     }, null);
   }
@@ -7904,12 +7794,9 @@ function inspect(value, opts) {
       }
     }
   }
-  if (ctx.colors)
-    ctx.stylize = stylizeWithColor;
-  if (ctx.maxArrayLength === null)
-    ctx.maxArrayLength = Infinity;
-  if (ctx.maxStringLength === null)
-    ctx.maxStringLength = Infinity;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  if (ctx.maxArrayLength === null) ctx.maxArrayLength = Infinity;
+  if (ctx.maxStringLength === null) ctx.maxStringLength = Infinity;
   return formatValue(ctx, value, 0);
 }
 var customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
@@ -9796,8 +9683,7 @@ var kEmptyObject = Object.freeze(/* @__PURE__ */ Object.create(null));
 function once(callback) {
   let called = false;
   return function(...args2) {
-    if (called)
-      return;
+    if (called) return;
     called = true;
     Reflect.apply(callback, this, args2);
   };
@@ -11648,18 +11534,13 @@ function getEncodingOps(encoding) {
   encoding = String(encoding).toLowerCase();
   switch (encoding.length) {
     case 4:
-      if (encoding === "utf8")
-        return encodingOps.utf8;
-      if (encoding === "ucs2")
-        return encodingOps.ucs2;
+      if (encoding === "utf8") return encodingOps.utf8;
+      if (encoding === "ucs2") return encodingOps.ucs2;
       break;
     case 5:
-      if (encoding === "utf-8")
-        return encodingOps.utf8;
-      if (encoding === "ascii")
-        return encodingOps.ascii;
-      if (encoding === "ucs-2")
-        return encodingOps.ucs2;
+      if (encoding === "utf-8") return encodingOps.utf8;
+      if (encoding === "ascii") return encodingOps.ascii;
+      if (encoding === "ucs-2") return encodingOps.ucs2;
       break;
     case 7:
       if (encoding === "utf16le") {
@@ -11671,12 +11552,12 @@ function getEncodingOps(encoding) {
         return encodingOps.utf16le;
       }
       break;
+    // deno-lint-ignore no-fallthrough
     case 6:
       if (encoding === "latin1" || encoding === "binary") {
         return encodingOps.latin1;
       }
-      if (encoding === "base64")
-        return encodingOps.base64;
+      if (encoding === "base64") return encodingOps.base64;
     case 3:
       if (encoding === "hex") {
         return encodingOps.hex;
@@ -12462,8 +12343,7 @@ EventEmitter.prototype.removeAllListeners = function removeAllListeners(type) {
   }
   if (arguments.length === 0) {
     for (const key of Reflect.ownKeys(events)) {
-      if (key === "removeListener")
-        continue;
+      if (key === "removeListener") continue;
       this.removeAllListeners(key);
     }
     this.removeAllListeners("removeListener");
@@ -12752,10 +12632,8 @@ function getForce(obj, key) {
   return v2;
 }
 function isNumber(x) {
-  if (typeof x === "number")
-    return true;
-  if (/^0x[0-9a-f]+$/i.test(String(x)))
-    return true;
+  if (typeof x === "number") return true;
+  if (/^0x[0-9a-f]+$/i.test(String(x))) return true;
   return /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/.test(String(x));
 }
 function hasKey(obj, keys) {
@@ -12878,8 +12756,7 @@ function parse2(args2, {
   }
   function setArg(key, val, arg = void 0, collect2) {
     if (arg && flags2.unknownFn && !argDefined(key, arg)) {
-      if (flags2.unknownFn(arg, key, val) === false)
-        return;
+      if (flags2.unknownFn(arg, key, val) === false) return;
     }
     const value = !get(flags2.strings, key) && isNumber(val) ? Number(val) : val;
     setKey(argv2, key, value, collect2);
@@ -13105,12 +12982,9 @@ function normalizeString(path5, allowAboveRoot, separator, isPathSeparator3) {
   let dots = 0;
   let code;
   for (let i2 = 0, len = path5.length; i2 <= len; ++i2) {
-    if (i2 < len)
-      code = path5.charCodeAt(i2);
-    else if (isPathSeparator3(code))
-      break;
-    else
-      code = CHAR_FORWARD_SLASH;
+    if (i2 < len) code = path5.charCodeAt(i2);
+    else if (isPathSeparator3(code)) break;
+    else code = CHAR_FORWARD_SLASH;
     if (isPathSeparator3(code)) {
       if (lastSlash === i2 - 1 || dots === 1) {
       } else if (lastSlash !== i2 - 1 && dots === 2) {
@@ -13136,17 +13010,13 @@ function normalizeString(path5, allowAboveRoot, separator, isPathSeparator3) {
           }
         }
         if (allowAboveRoot) {
-          if (res.length > 0)
-            res += `${separator}..`;
-          else
-            res = "..";
+          if (res.length > 0) res += `${separator}..`;
+          else res = "..";
           lastSegmentLength = 2;
         }
       } else {
-        if (res.length > 0)
-          res += separator + path5.slice(lastSlash + 1, i2);
-        else
-          res = path5.slice(lastSlash + 1, i2);
+        if (res.length > 0) res += separator + path5.slice(lastSlash + 1, i2);
+        else res = path5.slice(lastSlash + 1, i2);
         lastSegmentLength = i2 - lastSlash - 1;
       }
       lastSlash = i2;
@@ -13162,12 +13032,9 @@ function normalizeString(path5, allowAboveRoot, separator, isPathSeparator3) {
 function _format(sep7, pathObject) {
   const dir = pathObject.dir || pathObject.root;
   const base2 = pathObject.base || (pathObject.name || "") + (pathObject.ext || "");
-  if (!dir)
-    return base2;
-  if (base2 === sep7)
-    return dir;
-  if (dir === pathObject.root)
-    return dir + base2;
+  if (!dir) return base2;
+  if (base2 === sep7) return dir;
+  if (dir === pathObject.root) return dir + base2;
   return dir + sep7 + base2;
 }
 var WHITESPACE_ENCODINGS = {
@@ -13254,8 +13121,7 @@ function resolve(...pathSegments) {
     }
     assertPath(path5);
     const len = path5.length;
-    if (len === 0)
-      continue;
+    if (len === 0) continue;
     let rootEnd = 0;
     let device = "";
     let isAbsolute7 = false;
@@ -13267,21 +13133,18 @@ function resolve(...pathSegments) {
           let j2 = 2;
           let last = j2;
           for (; j2 < len; ++j2) {
-            if (isPathSeparator(path5.charCodeAt(j2)))
-              break;
+            if (isPathSeparator(path5.charCodeAt(j2))) break;
           }
           if (j2 < len && j2 !== last) {
             const firstPart = path5.slice(last, j2);
             last = j2;
             for (; j2 < len; ++j2) {
-              if (!isPathSeparator(path5.charCodeAt(j2)))
-                break;
+              if (!isPathSeparator(path5.charCodeAt(j2))) break;
             }
             if (j2 < len && j2 !== last) {
               last = j2;
               for (; j2 < len; ++j2) {
-                if (isPathSeparator(path5.charCodeAt(j2)))
-                  break;
+                if (isPathSeparator(path5.charCodeAt(j2))) break;
               }
               if (j2 === len) {
                 device = `\\\\${firstPart}\\${path5.slice(last)}`;
@@ -13321,8 +13184,7 @@ function resolve(...pathSegments) {
       resolvedTail = `${path5.slice(rootEnd)}\\${resolvedTail}`;
       resolvedAbsolute = isAbsolute7;
     }
-    if (resolvedAbsolute && resolvedDevice.length > 0)
-      break;
+    if (resolvedAbsolute && resolvedDevice.length > 0) break;
   }
   resolvedTail = normalizeString(
     resolvedTail,
@@ -13335,8 +13197,7 @@ function resolve(...pathSegments) {
 function normalize(path5) {
   assertPath(path5);
   const len = path5.length;
-  if (len === 0)
-    return ".";
+  if (len === 0) return ".";
   let rootEnd = 0;
   let device;
   let isAbsolute7 = false;
@@ -13348,21 +13209,18 @@ function normalize(path5) {
         let j2 = 2;
         let last = j2;
         for (; j2 < len; ++j2) {
-          if (isPathSeparator(path5.charCodeAt(j2)))
-            break;
+          if (isPathSeparator(path5.charCodeAt(j2))) break;
         }
         if (j2 < len && j2 !== last) {
           const firstPart = path5.slice(last, j2);
           last = j2;
           for (; j2 < len; ++j2) {
-            if (!isPathSeparator(path5.charCodeAt(j2)))
-              break;
+            if (!isPathSeparator(path5.charCodeAt(j2))) break;
           }
           if (j2 < len && j2 !== last) {
             last = j2;
             for (; j2 < len; ++j2) {
-              if (isPathSeparator(path5.charCodeAt(j2)))
-                break;
+              if (isPathSeparator(path5.charCodeAt(j2))) break;
             }
             if (j2 === len) {
               return `\\\\${firstPart}\\${path5.slice(last)}\\`;
@@ -13401,27 +13259,22 @@ function normalize(path5) {
   } else {
     tail = "";
   }
-  if (tail.length === 0 && !isAbsolute7)
-    tail = ".";
+  if (tail.length === 0 && !isAbsolute7) tail = ".";
   if (tail.length > 0 && isPathSeparator(path5.charCodeAt(len - 1))) {
     tail += "\\";
   }
   if (device === void 0) {
     if (isAbsolute7) {
-      if (tail.length > 0)
-        return `\\${tail}`;
-      else
-        return "\\";
+      if (tail.length > 0) return `\\${tail}`;
+      else return "\\";
     } else if (tail.length > 0) {
       return tail;
     } else {
       return "";
     }
   } else if (isAbsolute7) {
-    if (tail.length > 0)
-      return `${device}\\${tail}`;
-    else
-      return `${device}\\`;
+    if (tail.length > 0) return `${device}\\${tail}`;
+    else return `${device}\\`;
   } else if (tail.length > 0) {
     return device + tail;
   } else {
@@ -13431,37 +13284,31 @@ function normalize(path5) {
 function isAbsolute(path5) {
   assertPath(path5);
   const len = path5.length;
-  if (len === 0)
-    return false;
+  if (len === 0) return false;
   const code = path5.charCodeAt(0);
   if (isPathSeparator(code)) {
     return true;
   } else if (isWindowsDeviceRoot(code)) {
     if (len > 2 && path5.charCodeAt(1) === CHAR_COLON2) {
-      if (isPathSeparator(path5.charCodeAt(2)))
-        return true;
+      if (isPathSeparator(path5.charCodeAt(2))) return true;
     }
   }
   return false;
 }
 function join2(...paths) {
   const pathsCount = paths.length;
-  if (pathsCount === 0)
-    return ".";
+  if (pathsCount === 0) return ".";
   let joined;
   let firstPart = null;
   for (let i2 = 0; i2 < pathsCount; ++i2) {
     const path5 = paths[i2];
     assertPath(path5);
     if (path5.length > 0) {
-      if (joined === void 0)
-        joined = firstPart = path5;
-      else
-        joined += `\\${path5}`;
+      if (joined === void 0) joined = firstPart = path5;
+      else joined += `\\${path5}`;
     }
   }
-  if (joined === void 0)
-    return ".";
+  if (joined === void 0) return ".";
   let needsReplace = true;
   let slashCount = 0;
   assert2(firstPart != null);
@@ -13472,8 +13319,7 @@ function join2(...paths) {
       if (isPathSeparator(firstPart.charCodeAt(1))) {
         ++slashCount;
         if (firstLen > 2) {
-          if (isPathSeparator(firstPart.charCodeAt(2)))
-            ++slashCount;
+          if (isPathSeparator(firstPart.charCodeAt(2))) ++slashCount;
           else {
             needsReplace = false;
           }
@@ -13483,47 +13329,38 @@ function join2(...paths) {
   }
   if (needsReplace) {
     for (; slashCount < joined.length; ++slashCount) {
-      if (!isPathSeparator(joined.charCodeAt(slashCount)))
-        break;
+      if (!isPathSeparator(joined.charCodeAt(slashCount))) break;
     }
-    if (slashCount >= 2)
-      joined = `\\${joined.slice(slashCount)}`;
+    if (slashCount >= 2) joined = `\\${joined.slice(slashCount)}`;
   }
   return normalize(joined);
 }
 function relative(from2, to) {
   assertPath(from2);
   assertPath(to);
-  if (from2 === to)
-    return "";
+  if (from2 === to) return "";
   const fromOrig = resolve(from2);
   const toOrig = resolve(to);
-  if (fromOrig === toOrig)
-    return "";
+  if (fromOrig === toOrig) return "";
   from2 = fromOrig.toLowerCase();
   to = toOrig.toLowerCase();
-  if (from2 === to)
-    return "";
+  if (from2 === to) return "";
   let fromStart = 0;
   let fromEnd = from2.length;
   for (; fromStart < fromEnd; ++fromStart) {
-    if (from2.charCodeAt(fromStart) !== CHAR_BACKWARD_SLASH)
-      break;
+    if (from2.charCodeAt(fromStart) !== CHAR_BACKWARD_SLASH) break;
   }
   for (; fromEnd - 1 > fromStart; --fromEnd) {
-    if (from2.charCodeAt(fromEnd - 1) !== CHAR_BACKWARD_SLASH)
-      break;
+    if (from2.charCodeAt(fromEnd - 1) !== CHAR_BACKWARD_SLASH) break;
   }
   const fromLen = fromEnd - fromStart;
   let toStart = 0;
   let toEnd = to.length;
   for (; toStart < toEnd; ++toStart) {
-    if (to.charCodeAt(toStart) !== CHAR_BACKWARD_SLASH)
-      break;
+    if (to.charCodeAt(toStart) !== CHAR_BACKWARD_SLASH) break;
   }
   for (; toEnd - 1 > toStart; --toEnd) {
-    if (to.charCodeAt(toEnd - 1) !== CHAR_BACKWARD_SLASH)
-      break;
+    if (to.charCodeAt(toEnd - 1) !== CHAR_BACKWARD_SLASH) break;
   }
   const toLen = toEnd - toStart;
   const length = fromLen < toLen ? fromLen : toLen;
@@ -13549,39 +13386,31 @@ function relative(from2, to) {
     }
     const fromCode = from2.charCodeAt(fromStart + i2);
     const toCode = to.charCodeAt(toStart + i2);
-    if (fromCode !== toCode)
-      break;
-    else if (fromCode === CHAR_BACKWARD_SLASH)
-      lastCommonSep = i2;
+    if (fromCode !== toCode) break;
+    else if (fromCode === CHAR_BACKWARD_SLASH) lastCommonSep = i2;
   }
   if (i2 !== length && lastCommonSep === -1) {
     return toOrig;
   }
   let out2 = "";
-  if (lastCommonSep === -1)
-    lastCommonSep = 0;
+  if (lastCommonSep === -1) lastCommonSep = 0;
   for (i2 = fromStart + lastCommonSep + 1; i2 <= fromEnd; ++i2) {
     if (i2 === fromEnd || from2.charCodeAt(i2) === CHAR_BACKWARD_SLASH) {
-      if (out2.length === 0)
-        out2 += "..";
-      else
-        out2 += "\\..";
+      if (out2.length === 0) out2 += "..";
+      else out2 += "\\..";
     }
   }
   if (out2.length > 0) {
     return out2 + toOrig.slice(toStart + lastCommonSep, toEnd);
   } else {
     toStart += lastCommonSep;
-    if (toOrig.charCodeAt(toStart) === CHAR_BACKWARD_SLASH)
-      ++toStart;
+    if (toOrig.charCodeAt(toStart) === CHAR_BACKWARD_SLASH) ++toStart;
     return toOrig.slice(toStart, toEnd);
   }
 }
 function toNamespacedPath(path5) {
-  if (typeof path5 !== "string")
-    return path5;
-  if (path5.length === 0)
-    return "";
+  if (typeof path5 !== "string") return path5;
+  if (path5.length === 0) return "";
   const resolvedPath = resolve(path5);
   if (resolvedPath.length >= 3) {
     if (resolvedPath.charCodeAt(0) === CHAR_BACKWARD_SLASH) {
@@ -13602,8 +13431,7 @@ function toNamespacedPath(path5) {
 function dirname(path5) {
   assertPath(path5);
   const len = path5.length;
-  if (len === 0)
-    return ".";
+  if (len === 0) return ".";
   let rootEnd = -1;
   let end = -1;
   let matchedSlash = true;
@@ -13616,20 +13444,17 @@ function dirname(path5) {
         let j2 = 2;
         let last = j2;
         for (; j2 < len; ++j2) {
-          if (isPathSeparator(path5.charCodeAt(j2)))
-            break;
+          if (isPathSeparator(path5.charCodeAt(j2))) break;
         }
         if (j2 < len && j2 !== last) {
           last = j2;
           for (; j2 < len; ++j2) {
-            if (!isPathSeparator(path5.charCodeAt(j2)))
-              break;
+            if (!isPathSeparator(path5.charCodeAt(j2))) break;
           }
           if (j2 < len && j2 !== last) {
             last = j2;
             for (; j2 < len; ++j2) {
-              if (isPathSeparator(path5.charCodeAt(j2)))
-                break;
+              if (isPathSeparator(path5.charCodeAt(j2))) break;
             }
             if (j2 === len) {
               return path5;
@@ -13644,8 +13469,7 @@ function dirname(path5) {
       if (path5.charCodeAt(1) === CHAR_COLON2) {
         rootEnd = offset = 2;
         if (len > 2) {
-          if (isPathSeparator(path5.charCodeAt(2)))
-            rootEnd = offset = 3;
+          if (isPathSeparator(path5.charCodeAt(2))) rootEnd = offset = 3;
         }
       }
     }
@@ -13663,17 +13487,14 @@ function dirname(path5) {
     }
   }
   if (end === -1) {
-    if (rootEnd === -1)
-      return ".";
-    else
-      end = rootEnd;
+    if (rootEnd === -1) return ".";
+    else end = rootEnd;
   }
   return stripTrailingSeparators(path5.slice(0, end), isPosixPathSeparator);
 }
 function basename(path5, suffix = "") {
   assertPath(path5);
-  if (path5.length === 0)
-    return path5;
+  if (path5.length === 0) return path5;
   if (typeof suffix !== "string") {
     throw new TypeError(
       `Suffix must be a string. Received ${JSON.stringify(suffix)}`
@@ -13683,8 +13504,7 @@ function basename(path5, suffix = "") {
   if (path5.length >= 2) {
     const drive = path5.charCodeAt(0);
     if (isWindowsDeviceRoot(drive)) {
-      if (path5.charCodeAt(1) === CHAR_COLON2)
-        start2 = 2;
+      if (path5.charCodeAt(1) === CHAR_COLON2) start2 = 2;
     }
   }
   const lastSegment = lastPathSegment(path5, isPathSeparator, start2);
@@ -13716,10 +13536,8 @@ function extname(path5) {
       end = i2 + 1;
     }
     if (code === CHAR_DOT) {
-      if (startDot === -1)
-        startDot = i2;
-      else if (preDotState !== 1)
-        preDotState = 1;
+      if (startDot === -1) startDot = i2;
+      else if (preDotState !== 1) preDotState = 1;
     } else if (startDot !== -1) {
       preDotState = -1;
     }
@@ -13743,8 +13561,7 @@ function parse3(path5) {
   assertPath(path5);
   const ret = { root: "", dir: "", base: "", ext: "", name: "" };
   const len = path5.length;
-  if (len === 0)
-    return ret;
+  if (len === 0) return ret;
   let rootEnd = 0;
   let code = path5.charCodeAt(0);
   if (len > 1) {
@@ -13754,20 +13571,17 @@ function parse3(path5) {
         let j2 = 2;
         let last = j2;
         for (; j2 < len; ++j2) {
-          if (isPathSeparator(path5.charCodeAt(j2)))
-            break;
+          if (isPathSeparator(path5.charCodeAt(j2))) break;
         }
         if (j2 < len && j2 !== last) {
           last = j2;
           for (; j2 < len; ++j2) {
-            if (!isPathSeparator(path5.charCodeAt(j2)))
-              break;
+            if (!isPathSeparator(path5.charCodeAt(j2))) break;
           }
           if (j2 < len && j2 !== last) {
             last = j2;
             for (; j2 < len; ++j2) {
-              if (isPathSeparator(path5.charCodeAt(j2)))
-                break;
+              if (isPathSeparator(path5.charCodeAt(j2))) break;
             }
             if (j2 === len) {
               rootEnd = j2;
@@ -13800,8 +13614,7 @@ function parse3(path5) {
     ret.base = "\\";
     return ret;
   }
-  if (rootEnd > 0)
-    ret.root = path5.slice(0, rootEnd);
+  if (rootEnd > 0) ret.root = path5.slice(0, rootEnd);
   let startDot = -1;
   let startPart = rootEnd;
   let end = -1;
@@ -13822,10 +13635,8 @@ function parse3(path5) {
       end = i2 + 1;
     }
     if (code === CHAR_DOT) {
-      if (startDot === -1)
-        startDot = i2;
-      else if (preDotState !== 1)
-        preDotState = 1;
+      if (startDot === -1) startDot = i2;
+      else if (preDotState !== 1) preDotState = 1;
     } else if (startDot !== -1) {
       preDotState = -1;
     }
@@ -13844,8 +13655,7 @@ function parse3(path5) {
   ret.base = ret.base || "\\";
   if (startPart > 0 && startPart !== rootEnd) {
     ret.dir = path5.slice(0, startPart - 1);
-  } else
-    ret.dir = ret.root;
+  } else ret.dir = ret.root;
   return ret;
 }
 function fromFileUrl(url) {
@@ -13905,8 +13715,7 @@ function resolve2(...pathSegments) {
   let resolvedAbsolute = false;
   for (let i2 = pathSegments.length - 1; i2 >= -1 && !resolvedAbsolute; i2--) {
     let path5;
-    if (i2 >= 0)
-      path5 = pathSegments[i2];
+    if (i2 >= 0) path5 = pathSegments[i2];
     else {
       const { Deno: Deno3 } = globalThis;
       if (typeof Deno3?.cwd !== "function") {
@@ -13928,30 +13737,22 @@ function resolve2(...pathSegments) {
     isPosixPathSeparator
   );
   if (resolvedAbsolute) {
-    if (resolvedPath.length > 0)
-      return `/${resolvedPath}`;
-    else
-      return "/";
-  } else if (resolvedPath.length > 0)
-    return resolvedPath;
-  else
-    return ".";
+    if (resolvedPath.length > 0) return `/${resolvedPath}`;
+    else return "/";
+  } else if (resolvedPath.length > 0) return resolvedPath;
+  else return ".";
 }
 function normalize2(path5) {
   assertPath(path5);
-  if (path5.length === 0)
-    return ".";
+  if (path5.length === 0) return ".";
   const isAbsolute7 = isPosixPathSeparator(path5.charCodeAt(0));
   const trailingSeparator = isPosixPathSeparator(
     path5.charCodeAt(path5.length - 1)
   );
   path5 = normalizeString(path5, !isAbsolute7, "/", isPosixPathSeparator);
-  if (path5.length === 0 && !isAbsolute7)
-    path5 = ".";
-  if (path5.length > 0 && trailingSeparator)
-    path5 += "/";
-  if (isAbsolute7)
-    return `/${path5}`;
+  if (path5.length === 0 && !isAbsolute7) path5 = ".";
+  if (path5.length > 0 && trailingSeparator) path5 += "/";
+  if (isAbsolute7) return `/${path5}`;
   return path5;
 }
 function isAbsolute2(path5) {
@@ -13959,44 +13760,36 @@ function isAbsolute2(path5) {
   return path5.length > 0 && isPosixPathSeparator(path5.charCodeAt(0));
 }
 function join3(...paths) {
-  if (paths.length === 0)
-    return ".";
+  if (paths.length === 0) return ".";
   let joined;
   for (let i2 = 0, len = paths.length; i2 < len; ++i2) {
     const path5 = paths[i2];
     assertPath(path5);
     if (path5.length > 0) {
-      if (!joined)
-        joined = path5;
-      else
-        joined += `/${path5}`;
+      if (!joined) joined = path5;
+      else joined += `/${path5}`;
     }
   }
-  if (!joined)
-    return ".";
+  if (!joined) return ".";
   return normalize2(joined);
 }
 function relative2(from2, to) {
   assertPath(from2);
   assertPath(to);
-  if (from2 === to)
-    return "";
+  if (from2 === to) return "";
   from2 = resolve2(from2);
   to = resolve2(to);
-  if (from2 === to)
-    return "";
+  if (from2 === to) return "";
   let fromStart = 1;
   const fromEnd = from2.length;
   for (; fromStart < fromEnd; ++fromStart) {
-    if (!isPosixPathSeparator(from2.charCodeAt(fromStart)))
-      break;
+    if (!isPosixPathSeparator(from2.charCodeAt(fromStart))) break;
   }
   const fromLen = fromEnd - fromStart;
   let toStart = 1;
   const toEnd = to.length;
   for (; toStart < toEnd; ++toStart) {
-    if (!isPosixPathSeparator(to.charCodeAt(toStart)))
-      break;
+    if (!isPosixPathSeparator(to.charCodeAt(toStart))) break;
   }
   const toLen = toEnd - toStart;
   const length = fromLen < toLen ? fromLen : toLen;
@@ -14021,26 +13814,20 @@ function relative2(from2, to) {
     }
     const fromCode = from2.charCodeAt(fromStart + i2);
     const toCode = to.charCodeAt(toStart + i2);
-    if (fromCode !== toCode)
-      break;
-    else if (isPosixPathSeparator(fromCode))
-      lastCommonSep = i2;
+    if (fromCode !== toCode) break;
+    else if (isPosixPathSeparator(fromCode)) lastCommonSep = i2;
   }
   let out2 = "";
   for (i2 = fromStart + lastCommonSep + 1; i2 <= fromEnd; ++i2) {
     if (i2 === fromEnd || isPosixPathSeparator(from2.charCodeAt(i2))) {
-      if (out2.length === 0)
-        out2 += "..";
-      else
-        out2 += "/..";
+      if (out2.length === 0) out2 += "..";
+      else out2 += "/..";
     }
   }
-  if (out2.length > 0)
-    return out2 + to.slice(toStart + lastCommonSep);
+  if (out2.length > 0) return out2 + to.slice(toStart + lastCommonSep);
   else {
     toStart += lastCommonSep;
-    if (isPosixPathSeparator(to.charCodeAt(toStart)))
-      ++toStart;
+    if (isPosixPathSeparator(to.charCodeAt(toStart))) ++toStart;
     return to.slice(toStart);
   }
 }
@@ -14048,8 +13835,7 @@ function toNamespacedPath2(path5) {
   return path5;
 }
 function dirname2(path5) {
-  if (path5.length === 0)
-    return ".";
+  if (path5.length === 0) return ".";
   let end = -1;
   let matchedNonSeparator = false;
   for (let i2 = path5.length - 1; i2 >= 1; --i2) {
@@ -14072,8 +13858,7 @@ function dirname2(path5) {
 }
 function basename2(path5, suffix = "") {
   assertPath(path5);
-  if (path5.length === 0)
-    return path5;
+  if (path5.length === 0) return path5;
   if (typeof suffix !== "string") {
     throw new TypeError(
       `Suffix must be a string. Received ${JSON.stringify(suffix)}`
@@ -14107,10 +13892,8 @@ function extname2(path5) {
       end = i2 + 1;
     }
     if (code === CHAR_DOT) {
-      if (startDot === -1)
-        startDot = i2;
-      else if (preDotState !== 1)
-        preDotState = 1;
+      if (startDot === -1) startDot = i2;
+      else if (preDotState !== 1) preDotState = 1;
     } else if (startDot !== -1) {
       preDotState = -1;
     }
@@ -14133,8 +13916,7 @@ function format2(pathObject) {
 function parse4(path5) {
   assertPath(path5);
   const ret = { root: "", dir: "", base: "", ext: "", name: "" };
-  if (path5.length === 0)
-    return ret;
+  if (path5.length === 0) return ret;
   const isAbsolute7 = isPosixPathSeparator(path5.charCodeAt(0));
   let start2;
   if (isAbsolute7) {
@@ -14163,10 +13945,8 @@ function parse4(path5) {
       end = i2 + 1;
     }
     if (code === CHAR_DOT) {
-      if (startDot === -1)
-        startDot = i2;
-      else if (preDotState !== 1)
-        preDotState = 1;
+      if (startDot === -1) startDot = i2;
+      else if (preDotState !== 1) preDotState = 1;
     } else if (startDot !== -1) {
       preDotState = -1;
     }
@@ -14197,8 +13977,7 @@ function parse4(path5) {
       path5.slice(0, startPart - 1),
       isPosixPathSeparator
     );
-  } else if (isAbsolute7)
-    ret.dir = "/";
+  } else if (isAbsolute7) ret.dir = "/";
   return ret;
 }
 function fromFileUrl2(url) {
@@ -14358,17 +14137,13 @@ function cursorTo(stream, x, y, callback) {
     callback = y;
     y = void 0;
   }
-  if (Number.isNaN(x))
-    throw new ERR_INVALID_ARG_VALUE("x", x);
-  if (Number.isNaN(y))
-    throw new ERR_INVALID_ARG_VALUE("y", y);
+  if (Number.isNaN(x)) throw new ERR_INVALID_ARG_VALUE("x", x);
+  if (Number.isNaN(y)) throw new ERR_INVALID_ARG_VALUE("y", y);
   if (stream == null || typeof x !== "number" && typeof y !== "number") {
-    if (typeof callback === "function")
-      process.nextTick(callback, null);
+    if (typeof callback === "function") process.nextTick(callback, null);
     return true;
   }
-  if (typeof x !== "number")
-    throw new ERR_INVALID_CURSOR_POS();
+  if (typeof x !== "number") throw new ERR_INVALID_CURSOR_POS();
   const data = typeof y !== "number" ? CSI`${x + 1}G` : CSI`${y + 1};${x + 1}H`;
   return stream.write(data, callback);
 }
@@ -14377,8 +14152,7 @@ function moveCursor(stream, dx, dy, callback) {
     validateFunction(callback, "callback");
   }
   if (stream == null || !(dx || dy)) {
-    if (typeof callback === "function")
-      process.nextTick(callback, null);
+    if (typeof callback === "function") process.nextTick(callback, null);
     return true;
   }
   let data = "";
@@ -14399,8 +14173,7 @@ function clearLine(stream, dir, callback) {
     validateFunction(callback, "callback");
   }
   if (stream === null || stream === void 0) {
-    if (typeof callback === "function")
-      process.nextTick(callback, null);
+    if (typeof callback === "function") process.nextTick(callback, null);
     return true;
   }
   const type = dir < 0 ? kClearToLineBeginning : dir > 0 ? kClearToLineEnd : kClearLine;
@@ -14411,8 +14184,7 @@ function clearScreenDown(stream, callback) {
     validateFunction(callback, "callback");
   }
   if (stream === null || stream === void 0) {
-    if (typeof callback === "function")
-      process.nextTick(callback, null);
+    if (typeof callback === "function") process.nextTick(callback, null);
     return true;
   }
   return stream.write(kClearScreenDown, callback);
@@ -14430,8 +14202,7 @@ var NotImplemented = /* @__PURE__ */ ((NotImplemented2) => {
 })(NotImplemented || {});
 function normalizeEncoding3(enc) {
   const encoding = normalizeEncoding2(enc ?? null);
-  if (encoding && encoding in NotImplemented)
-    notImplemented(encoding);
+  if (encoding && encoding in NotImplemented) notImplemented(encoding);
   if (!encoding && typeof enc === "string" && enc.toLowerCase() !== "raw") {
     throw new Error(`Unknown encoding: ${enc}`);
   }
@@ -14441,43 +14212,32 @@ function isBufferType(buf) {
   return buf instanceof ArrayBuffer && buf.BYTES_PER_ELEMENT;
 }
 function utf8CheckByte(byte) {
-  if (byte <= 127)
-    return 0;
-  else if (byte >> 5 === 6)
-    return 2;
-  else if (byte >> 4 === 14)
-    return 3;
-  else if (byte >> 3 === 30)
-    return 4;
+  if (byte <= 127) return 0;
+  else if (byte >> 5 === 6) return 2;
+  else if (byte >> 4 === 14) return 3;
+  else if (byte >> 3 === 30) return 4;
   return byte >> 6 === 2 ? -1 : -2;
 }
 function utf8CheckIncomplete(self, buf, i2) {
   let j2 = buf.length - 1;
-  if (j2 < i2)
-    return 0;
+  if (j2 < i2) return 0;
   let nb = utf8CheckByte(buf[j2]);
   if (nb >= 0) {
-    if (nb > 0)
-      self.lastNeed = nb - 1;
+    if (nb > 0) self.lastNeed = nb - 1;
     return nb;
   }
-  if (--j2 < i2 || nb === -2)
-    return 0;
+  if (--j2 < i2 || nb === -2) return 0;
   nb = utf8CheckByte(buf[j2]);
   if (nb >= 0) {
-    if (nb > 0)
-      self.lastNeed = nb - 2;
+    if (nb > 0) self.lastNeed = nb - 2;
     return nb;
   }
-  if (--j2 < i2 || nb === -2)
-    return 0;
+  if (--j2 < i2 || nb === -2) return 0;
   nb = utf8CheckByte(buf[j2]);
   if (nb >= 0) {
     if (nb > 0) {
-      if (nb === 2)
-        nb = 0;
-      else
-        self.lastNeed = nb - 3;
+      if (nb === 2) nb = 0;
+      else self.lastNeed = nb - 3;
     }
     return nb;
   }
@@ -14504,8 +14264,7 @@ function utf8CheckExtraBytes(self, buf) {
 function utf8FillLastComplete(buf) {
   const p = this.lastTotal - this.lastNeed;
   const r2 = utf8CheckExtraBytes(this, buf);
-  if (r2 !== void 0)
-    return r2;
+  if (r2 !== void 0) return r2;
   if (this.lastNeed <= buf.length) {
     buf.copy(this.lastChar, p, 0, this.lastNeed);
     return this.lastChar.toString(this.encoding, 0, this.lastTotal);
@@ -14523,8 +14282,7 @@ function utf8FillLastIncomplete(buf) {
 }
 function utf8Text(buf, i2) {
   const total = utf8CheckIncomplete(this, buf, i2);
-  if (!this.lastNeed)
-    return buf.toString("utf8", i2);
+  if (!this.lastNeed) return buf.toString("utf8", i2);
   this.lastTotal = total;
   const end = buf.length - (total - this.lastNeed);
   buf.copy(this.lastChar, 0, end);
@@ -14532,23 +14290,20 @@ function utf8Text(buf, i2) {
 }
 function utf8End(buf) {
   const r2 = buf && buf.length ? this.write(buf) : "";
-  if (this.lastNeed)
-    return r2 + "�";
+  if (this.lastNeed) return r2 + "�";
   return r2;
 }
 function utf8Write2(buf) {
   if (typeof buf === "string") {
     return buf;
   }
-  if (buf.length === 0)
-    return "";
+  if (buf.length === 0) return "";
   let r2;
   let i2;
   const normalizedBuffer = isBufferType(buf) ? buf : Buffer3.from(buf);
   if (this.lastNeed) {
     r2 = this.fillLast(normalizedBuffer);
-    if (r2 === void 0)
-      return "";
+    if (r2 === void 0) return "";
     i2 = this.lastNeed;
     this.lastNeed = 0;
   } else {
@@ -14561,8 +14316,7 @@ function utf8Write2(buf) {
 }
 function base64Text(buf, i2) {
   const n2 = (buf.length - i2) % 3;
-  if (n2 === 0)
-    return buf.toString("base64", i2);
+  if (n2 === 0) return buf.toString("base64", i2);
   this.lastNeed = 3 - n2;
   this.lastTotal = 3;
   if (n2 === 1) {
@@ -14818,21 +14572,17 @@ function isWritable(stream) {
   return typeof stream.writable === "boolean" || typeof stream.writableEnded === "boolean" || !!stream._writableState;
 }
 function isWritableFinished(stream) {
-  if (stream.writableFinished)
-    return true;
+  if (stream.writableFinished) return true;
   const wState = stream._writableState;
-  if (!wState || wState.errored)
-    return false;
+  if (!wState || wState.errored) return false;
   return wState.finished || wState.ended && wState.length === 0;
 }
 var nop = () => {
 };
 function isReadableEnded(stream) {
-  if (stream.readableEnded)
-    return true;
+  if (stream.readableEnded) return true;
   const rState = stream._readableState;
-  if (!rState || rState.errored)
-    return false;
+  if (!rState || rState.errored) return false;
   return rState.endEmitted || rState.ended && rState.length === 0;
 }
 function eos(stream, options, callback) {
@@ -14853,29 +14603,22 @@ function eos(stream, options, callback) {
   const rState = stream._readableState;
   const state = wState || rState;
   const onlegacyfinish = () => {
-    if (!stream.writable)
-      onfinish();
+    if (!stream.writable) onfinish();
   };
   let willEmitClose = isServerResponse(stream) || state && state.autoDestroy && state.emitClose && state.closed === false && isReadable(stream) === readable && isWritable(stream) === writable;
   let writableFinished = stream.writableFinished || wState && wState.finished;
   const onfinish = () => {
     writableFinished = true;
-    if (stream.destroyed)
-      willEmitClose = false;
-    if (willEmitClose && (!stream.readable || readable))
-      return;
-    if (!readable || readableEnded)
-      callback.call(stream);
+    if (stream.destroyed) willEmitClose = false;
+    if (willEmitClose && (!stream.readable || readable)) return;
+    if (!readable || readableEnded) callback.call(stream);
   };
   let readableEnded = stream.readableEnded || rState && rState.endEmitted;
   const onend = () => {
     readableEnded = true;
-    if (stream.destroyed)
-      willEmitClose = false;
-    if (willEmitClose && (!stream.writable || writable))
-      return;
-    if (!writable || writableFinished)
-      callback.call(stream);
+    if (stream.destroyed) willEmitClose = false;
+    if (willEmitClose && (!stream.writable || writable)) return;
+    if (!writable || writableFinished) callback.call(stream);
   };
   const onerror = (err2) => {
     callback.call(stream, err2);
@@ -14901,10 +14644,8 @@ function eos(stream, options, callback) {
     if (!willEmitClose) {
       stream.on("abort", onclose);
     }
-    if (stream.req)
-      onrequest();
-    else
-      stream.on("request", onrequest);
+    if (stream.req) onrequest();
+    else stream.on("request", onrequest);
   } else if (writable && !wState) {
     stream.on("end", onlegacyfinish);
     stream.on("close", onlegacyfinish);
@@ -14914,8 +14655,7 @@ function eos(stream, options, callback) {
   }
   stream.on("end", onend);
   stream.on("finish", onfinish);
-  if (options.error !== false)
-    stream.on("error", onerror);
+  if (options.error !== false) stream.on("error", onerror);
   stream.on("close", onclose);
   const closed = !wState && !rState && stream._closed === true || (wState && wState.closed || rState && rState.closed || wState && wState.errorEmitted || rState && rState.errorEmitted || rState && stream.req && stream.aborted || (!wState || !willEmitClose || typeof wState.closed !== "boolean") && (!rState || !willEmitClose || typeof rState.closed !== "boolean") && (!writable || wState && wState.finished) && (!readable || rState && rState.endEmitted));
   if (closed) {
@@ -14929,8 +14669,7 @@ function eos(stream, options, callback) {
     stream.removeListener("complete", onfinish);
     stream.removeListener("abort", onclose);
     stream.removeListener("request", onrequest);
-    if (stream.req)
-      stream.req.removeListener("finish", onfinish);
+    if (stream.req) stream.req.removeListener("finish", onfinish);
     stream.removeListener("end", onlegacyfinish);
     stream.removeListener("close", onlegacyfinish);
     stream.removeListener("finish", onfinish);
@@ -14972,61 +14711,45 @@ function isNodeStream(obj) {
   return obj && (obj._readableState || obj._writableState || typeof obj.write === "function" && typeof obj.on === "function" || typeof obj.pipe === "function" && typeof obj.on === "function");
 }
 function isDestroyed(stream) {
-  if (!isNodeStream(stream))
-    return null;
+  if (!isNodeStream(stream)) return null;
   const wState = stream._writableState;
   const rState = stream._readableState;
   const state = wState || rState;
   return !!(stream.destroyed || state?.destroyed);
 }
 function isWritableEnded(stream) {
-  if (!isWritableNodeStream(stream))
-    return null;
-  if (stream.writableEnded === true)
-    return true;
+  if (!isWritableNodeStream(stream)) return null;
+  if (stream.writableEnded === true) return true;
   const wState = stream._writableState;
-  if (wState?.errored)
-    return false;
-  if (typeof wState?.ended !== "boolean")
-    return null;
+  if (wState?.errored) return false;
+  if (typeof wState?.ended !== "boolean") return null;
   return wState.ended;
 }
 function isReadableEnded2(stream) {
-  if (!isReadableNodeStream(stream))
-    return null;
-  if (stream.readableEnded === true)
-    return true;
+  if (!isReadableNodeStream(stream)) return null;
+  if (stream.readableEnded === true) return true;
   const rState = stream._readableState;
-  if (!rState || rState.errored)
-    return false;
-  if (typeof rState?.ended !== "boolean")
-    return null;
+  if (!rState || rState.errored) return false;
+  if (typeof rState?.ended !== "boolean") return null;
   return rState.ended;
 }
 function isReadableFinished(stream, strict) {
-  if (!isReadableNodeStream(stream))
-    return null;
+  if (!isReadableNodeStream(stream)) return null;
   const rState = stream._readableState;
-  if (rState?.errored)
-    return false;
-  if (typeof rState?.endEmitted !== "boolean")
-    return null;
+  if (rState?.errored) return false;
+  if (typeof rState?.endEmitted !== "boolean") return null;
   return !!(rState.endEmitted || strict === false && rState.ended === true && rState.length === 0);
 }
 function isReadable2(stream) {
   const r2 = isReadableNodeStream(stream);
-  if (r2 === null || typeof stream?.readable !== "boolean")
-    return null;
-  if (isDestroyed(stream))
-    return false;
+  if (r2 === null || typeof stream?.readable !== "boolean") return null;
+  if (isDestroyed(stream)) return false;
   return r2 && stream.readable && !isReadableFinished(stream);
 }
 function isWritable2(stream) {
   const r2 = isWritableNodeStream(stream);
-  if (r2 === null || typeof stream?.writable !== "boolean")
-    return null;
-  if (isDestroyed(stream))
-    return false;
+  if (r2 === null || typeof stream?.writable !== "boolean") return null;
+  if (isDestroyed(stream)) return false;
   return r2 && stream.writable && !isWritableEnded(stream);
 }
 
@@ -15039,15 +14762,12 @@ var yi = Object.getOwnPropertyNames;
 var gi = Object.getPrototypeOf;
 var Si = Object.prototype.hasOwnProperty;
 var E = ((e2) => typeof __require < "u" ? __require : typeof Proxy < "u" ? new Proxy(e2, { get: (t, n2) => (typeof __require < "u" ? __require : t)[n2] }) : e2)(function(e2) {
-  if (typeof __require < "u")
-    return __require.apply(this, arguments);
+  if (typeof __require < "u") return __require.apply(this, arguments);
   throw new Error('Dynamic require of "' + e2 + '" is not supported');
 });
 var g = (e2, t) => () => (t || e2((t = { exports: {} }).exports, t), t.exports);
 var Ei = (e2, t, n2, r2) => {
-  if (t && typeof t == "object" || typeof t == "function")
-    for (let i2 of yi(t))
-      !Si.call(e2, i2) && i2 !== n2 && Bt(e2, i2, { get: () => t[i2], enumerable: !(r2 = wi(t, i2)) || r2.enumerable });
+  if (t && typeof t == "object" || typeof t == "function") for (let i2 of yi(t)) !Si.call(e2, i2) && i2 !== n2 && Bt(e2, i2, { get: () => t[i2], enumerable: !(r2 = wi(t, i2)) || r2.enumerable });
   return e2;
 };
 var Ri = (e2, t, n2) => (n2 = e2 != null ? pi(gi(e2)) : {}, Ei(t || !e2 || !e2.__esModule ? Bt(n2, "default", { value: e2, enumerable: true }) : n2, e2));
@@ -15112,11 +14832,9 @@ var j = g((Kf, Je) => {
     return false;
   }, Xe = class extends Error {
     constructor(t) {
-      if (!Array.isArray(t))
-        throw new TypeError(`Expected input to be an Array, got ${typeof t}`);
+      if (!Array.isArray(t)) throw new TypeError(`Expected input to be an Array, got ${typeof t}`);
       let n2 = "";
-      for (let r2 = 0; r2 < t.length; r2++)
-        n2 += `    ${t[r2].stack}
+      for (let r2 = 0; r2 < t.length; r2++) n2 += `    ${t[r2].stack}
 `;
       super(n2), this.name = "AggregateError", this.errors = t;
     }
@@ -15146,12 +14864,9 @@ var j = g((Kf, Je) => {
   }, inspect(e2) {
     switch (typeof e2) {
       case "string":
-        if (e2.includes("'"))
-          if (e2.includes('"')) {
-            if (!e2.includes("`") && !e2.includes("${"))
-              return `\`${e2}\``;
-          } else
-            return `"${e2}"`;
+        if (e2.includes("'")) if (e2.includes('"')) {
+          if (!e2.includes("`") && !e2.includes("${")) return `\`${e2}\``;
+        } else return `"${e2}"`;
         return `'${e2}'`;
       case "number":
         return isNaN(e2) ? "NaN" : Object.is(e2, -0) ? String(e2) : e2;
@@ -15174,18 +14889,15 @@ var O = g((zf, Kt) => {
   "use strict";
   var { format: Ii, inspect: Re, AggregateError: Mi } = j(), Ni = globalThis.AggregateError || Mi, Di = Symbol("kIsNodeError"), Oi = ["string", "function", "number", "object", "Function", "Object", "boolean", "bigint", "symbol"], qi = /^([A-Z][a-z0-9]*)+$/, xi = "__node_internal_", Ae = {};
   function X(e2, t) {
-    if (!e2)
-      throw new Ae.ERR_INTERNAL_ASSERTION(t);
+    if (!e2) throw new Ae.ERR_INTERNAL_ASSERTION(t);
   }
   function Vt(e2) {
     let t = "", n2 = e2.length, r2 = e2[0] === "-" ? 1 : 0;
-    for (; n2 >= r2 + 4; n2 -= 3)
-      t = `_${e2.slice(n2 - 3, n2)}${t}`;
+    for (; n2 >= r2 + 4; n2 -= 3) t = `_${e2.slice(n2 - 3, n2)}${t}`;
     return `${e2.slice(0, n2)}${t}`;
   }
   function Li(e2, t, n2) {
-    if (typeof t == "function")
-      return X(t.length <= n2.length, `Code: ${e2}; The provided arguments length (${n2.length}) does not match the required ones (${t.length}).`), t(...n2);
+    if (typeof t == "function") return X(t.length <= n2.length, `Code: ${e2}; The provided arguments length (${n2.length}) does not match the required ones (${t.length}).`), t(...n2);
     let r2 = (t.match(/%[dfijoOs]/g) || []).length;
     return X(r2 === n2.length, `Code: ${e2}; The provided arguments length (${n2.length}) does not match the required ones (${r2}).`), n2.length === 0 ? t : Ii(t, ...n2);
   }
@@ -15209,8 +14921,7 @@ var O = g((zf, Kt) => {
   }
   function Pi(e2, t) {
     if (e2 && t && e2 !== t) {
-      if (Array.isArray(t.errors))
-        return t.errors.push(e2), t;
+      if (Array.isArray(t.errors)) return t.errors.push(e2), t;
       let n2 = new Ni([t, e2], t.message);
       return n2.code = t.code, n2;
     }
@@ -15218,8 +14929,7 @@ var O = g((zf, Kt) => {
   }
   var Qe = class extends Error {
     constructor(t = "The operation was aborted", n2 = void 0) {
-      if (n2 !== void 0 && typeof n2 != "object")
-        throw new Ae.ERR_INVALID_ARG_TYPE("options", "Object", n2);
+      if (n2 !== void 0 && typeof n2 != "object") throw new Ae.ERR_INVALID_ARG_TYPE("options", "Object", n2);
       super(t, n2), this.code = "ABORT_ERR", this.name = "AbortError";
     }
   };
@@ -15229,8 +14939,7 @@ var O = g((zf, Kt) => {
     let r2 = "The ";
     e2.endsWith(" argument") ? r2 += `${e2} ` : r2 += `"${e2}" ${e2.includes(".") ? "property" : "argument"} `, r2 += "must be ";
     let i2 = [], o2 = [], l = [];
-    for (let f of t)
-      X(typeof f == "string", "All expected entries have to be of type string"), Oi.includes(f) ? i2.push(f.toLowerCase()) : qi.test(f) ? o2.push(f) : (X(f !== "object", 'The value "object" should be written as "Object"'), l.push(f));
+    for (let f of t) X(typeof f == "string", "All expected entries have to be of type string"), Oi.includes(f) ? i2.push(f.toLowerCase()) : qi.test(f) ? o2.push(f) : (X(f !== "object", 'The value "object" should be written as "Object"'), l.push(f));
     if (o2.length > 0) {
       let f = i2.indexOf("object");
       f !== -1 && (i2.splice(i2, f, 1), o2.push("Object"));
@@ -15279,10 +14988,8 @@ var O = g((zf, Kt) => {
         r2 += `one of ${l.join(", ")}, or ${f}`;
       }
     }
-    if (n2 == null)
-      r2 += `. Received ${n2}`;
-    else if (typeof n2 == "function" && n2.name)
-      r2 += `. Received function ${n2.name}`;
+    if (n2 == null) r2 += `. Received ${n2}`;
+    else if (typeof n2 == "function" && n2.name) r2 += `. Received function ${n2.name}`;
     else if (typeof n2 == "object") {
       var u;
       (u = n2.constructor) !== null && u !== void 0 && u.name ? r2 += `. Received an instance of ${n2.constructor.name}` : r2 += `. Received ${Re(n2, { depth: -1 })}`;
@@ -15350,44 +15057,31 @@ var _e = g((Xf, nn) => {
   var Ji = /^[0-7]+$/, Qi = "must be a 32-bit unsigned integer or an octal string";
   function Zi(e2, t, n2) {
     if (typeof e2 > "u" && (e2 = n2), typeof e2 == "string") {
-      if (Fi(Ji, e2) === null)
-        throw new me(t, e2, Qi);
+      if (Fi(Ji, e2) === null) throw new me(t, e2, Qi);
       e2 = $i(e2, 8);
     }
     return en(e2, t), e2;
   }
   var eo = k((e2, t, n2 = ji, r2 = Ci) => {
-    if (typeof e2 != "number")
-      throw new q(t, "number", e2);
-    if (!et(e2))
-      throw new J(t, "an integer", e2);
-    if (e2 < n2 || e2 > r2)
-      throw new J(t, `>= ${n2} && <= ${r2}`, e2);
+    if (typeof e2 != "number") throw new q(t, "number", e2);
+    if (!et(e2)) throw new J(t, "an integer", e2);
+    if (e2 < n2 || e2 > r2) throw new J(t, `>= ${n2} && <= ${r2}`, e2);
   }), to = k((e2, t, n2 = -2147483648, r2 = 2147483647) => {
-    if (typeof e2 != "number")
-      throw new q(t, "number", e2);
-    if (!et(e2))
-      throw new J(t, "an integer", e2);
-    if (e2 < n2 || e2 > r2)
-      throw new J(t, `>= ${n2} && <= ${r2}`, e2);
+    if (typeof e2 != "number") throw new q(t, "number", e2);
+    if (!et(e2)) throw new J(t, "an integer", e2);
+    if (e2 < n2 || e2 > r2) throw new J(t, `>= ${n2} && <= ${r2}`, e2);
   }), en = k((e2, t, n2 = false) => {
-    if (typeof e2 != "number")
-      throw new q(t, "number", e2);
-    if (!et(e2))
-      throw new J(t, "an integer", e2);
+    if (typeof e2 != "number") throw new q(t, "number", e2);
+    if (!et(e2)) throw new J(t, "an integer", e2);
     let r2 = n2 ? 1 : 0, i2 = 4294967295;
-    if (e2 < r2 || e2 > i2)
-      throw new J(t, `>= ${r2} && <= ${i2}`, e2);
+    if (e2 < r2 || e2 > i2) throw new J(t, `>= ${r2} && <= ${i2}`, e2);
   });
   function tn(e2, t) {
-    if (typeof e2 != "string")
-      throw new q(t, "string", e2);
+    if (typeof e2 != "string") throw new q(t, "string", e2);
   }
   function no(e2, t, n2 = void 0, r2) {
-    if (typeof e2 != "number")
-      throw new q(t, "number", e2);
-    if (n2 != null && e2 < n2 || r2 != null && e2 > r2 || (n2 != null || r2 != null) && Wi(e2))
-      throw new J(t, `${n2 != null ? `>= ${n2}` : ""}${n2 != null && r2 != null ? " && " : ""}${r2 != null ? `<= ${r2}` : ""}`, e2);
+    if (typeof e2 != "number") throw new q(t, "number", e2);
+    if (n2 != null && e2 < n2 || r2 != null && e2 > r2 || (n2 != null || r2 != null) && Wi(e2)) throw new J(t, `${n2 != null ? `>= ${n2}` : ""}${n2 != null && r2 != null ? " && " : ""}${r2 != null ? `<= ${r2}` : ""}`, e2);
   }
   var ro = k((e2, t, n2) => {
     if (!Qt(n2, e2)) {
@@ -15396,58 +15090,46 @@ var _e = g((Xf, nn) => {
     }
   });
   function io(e2, t) {
-    if (typeof e2 != "boolean")
-      throw new q(t, "boolean", e2);
+    if (typeof e2 != "boolean") throw new q(t, "boolean", e2);
   }
   function Ze(e2, t, n2) {
     return e2 == null || !vi(e2, t) ? n2 : e2[t];
   }
   var oo = k((e2, t, n2 = null) => {
     let r2 = Ze(n2, "allowArray", false), i2 = Ze(n2, "allowFunction", false);
-    if (!Ze(n2, "nullable", false) && e2 === null || !r2 && Jt(e2) || typeof e2 != "object" && (!i2 || typeof e2 != "function"))
-      throw new q(t, "Object", e2);
+    if (!Ze(n2, "nullable", false) && e2 === null || !r2 && Jt(e2) || typeof e2 != "object" && (!i2 || typeof e2 != "function")) throw new q(t, "Object", e2);
   }), lo = k((e2, t, n2 = 0) => {
-    if (!Jt(e2))
-      throw new q(t, "Array", e2);
+    if (!Jt(e2)) throw new q(t, "Array", e2);
     if (e2.length < n2) {
       let r2 = `must be longer than ${n2}`;
       throw new me(t, e2, r2);
     }
   });
   function ao(e2, t = "signal") {
-    if (tn(e2, t), Xt[e2] === void 0)
-      throw Xt[Bi(e2)] !== void 0 ? new zt(e2 + " (signals must use all capital letters)") : new zt(e2);
+    if (tn(e2, t), Xt[e2] === void 0) throw Xt[Bi(e2)] !== void 0 ? new zt(e2 + " (signals must use all capital letters)") : new zt(e2);
   }
   var fo = k((e2, t = "buffer") => {
-    if (!Ki(e2))
-      throw new q(t, ["Buffer", "TypedArray", "DataView"], e2);
+    if (!Ki(e2)) throw new q(t, ["Buffer", "TypedArray", "DataView"], e2);
   });
   function uo(e2, t) {
     let n2 = Vi(t), r2 = e2.length;
-    if (n2 === "hex" && r2 % 2 !== 0)
-      throw new me("encoding", t, `is invalid for data of length ${r2}`);
+    if (n2 === "hex" && r2 % 2 !== 0) throw new me("encoding", t, `is invalid for data of length ${r2}`);
   }
   function so(e2, t = "Port", n2 = true) {
-    if (typeof e2 != "number" && typeof e2 != "string" || typeof e2 == "string" && Gi(e2).length === 0 || +e2 !== +e2 >>> 0 || e2 > 65535 || e2 === 0 && !n2)
-      throw new Hi(t, e2, n2);
+    if (typeof e2 != "number" && typeof e2 != "string" || typeof e2 == "string" && Gi(e2).length === 0 || +e2 !== +e2 >>> 0 || e2 > 65535 || e2 === 0 && !n2) throw new Hi(t, e2, n2);
     return e2 | 0;
   }
   var co = k((e2, t) => {
-    if (e2 !== void 0 && (e2 === null || typeof e2 != "object" || !("aborted" in e2)))
-      throw new q(t, "AbortSignal", e2);
+    if (e2 !== void 0 && (e2 === null || typeof e2 != "object" || !("aborted" in e2))) throw new q(t, "AbortSignal", e2);
   }), ho = k((e2, t) => {
-    if (typeof e2 != "function")
-      throw new q(t, "Function", e2);
+    if (typeof e2 != "function") throw new q(t, "Function", e2);
   }), bo = k((e2, t) => {
-    if (typeof e2 != "function" || Yi(e2))
-      throw new q(t, "Function", e2);
+    if (typeof e2 != "function" || Yi(e2)) throw new q(t, "Function", e2);
   }), _o = k((e2, t) => {
-    if (e2 !== void 0)
-      throw new q(t, "undefined", e2);
+    if (e2 !== void 0) throw new q(t, "undefined", e2);
   });
   function po(e2, t, n2) {
-    if (!Qt(n2, e2))
-      throw new q(t, `('${Zt(n2, "|")}')`, e2);
+    if (!Qt(n2, e2)) throw new q(t, `('${Zt(n2, "|")}')`, e2);
   }
   nn.exports = { isInt32: zi, isUint32: Xi, parseFileMode: Zi, validateArray: lo, validateBoolean: io, validateBuffer: fo, validateEncoding: uo, validateFunction: ho, validateInt32: to, validateInteger: eo, validateNumber: no, validateObject: oo, validateOneOf: ro, validatePlainFunction: bo, validatePort: so, validateSignalName: ao, validateString: tn, validateUint32: en, validateUndefined: _o, validateUnion: po, validateAbortSignal: co };
 });
@@ -15472,38 +15154,30 @@ var V = g((Jf, _n) => {
     return e2 == null ? false : t === true ? typeof e2[rn] == "function" : t === false ? typeof e2[on2] == "function" : typeof e2[rn] == "function" || typeof e2[on2] == "function";
   }
   function Ne(e2) {
-    if (!Q(e2))
-      return null;
+    if (!Q(e2)) return null;
     let t = e2._writableState, n2 = e2._readableState, r2 = t || n2;
     return !!(e2.destroyed || e2[ln] || r2 != null && r2.destroyed);
   }
   function un(e2) {
-    if (!Me(e2))
-      return null;
-    if (e2.writableEnded === true)
-      return true;
+    if (!Me(e2)) return null;
+    if (e2.writableEnded === true) return true;
     let t = e2._writableState;
     return t != null && t.errored ? false : typeof t?.ended != "boolean" ? null : t.ended;
   }
   function go(e2, t) {
-    if (!Me(e2))
-      return null;
-    if (e2.writableFinished === true)
-      return true;
+    if (!Me(e2)) return null;
+    if (e2.writableFinished === true) return true;
     let n2 = e2._writableState;
     return n2 != null && n2.errored ? false : typeof n2?.finished != "boolean" ? null : !!(n2.finished || t === false && n2.ended === true && n2.length === 0);
   }
   function So(e2) {
-    if (!Ie(e2))
-      return null;
-    if (e2.readableEnded === true)
-      return true;
+    if (!Ie(e2)) return null;
+    if (e2.readableEnded === true) return true;
     let t = e2._readableState;
     return !t || t.errored ? false : typeof t?.ended != "boolean" ? null : t.ended;
   }
   function sn(e2, t) {
-    if (!Ie(e2))
-      return null;
+    if (!Ie(e2)) return null;
     let n2 = e2._readableState;
     return n2 != null && n2.errored ? false : typeof n2?.endEmitted != "boolean" ? null : !!(n2.endEmitted || t === false && n2.ended === true && n2.length === 0);
   }
@@ -15525,10 +15199,8 @@ var V = g((Jf, _n) => {
     return Q(e2) ? e2.readableErrored ? e2.readableErrored : (t = (n2 = e2._readableState) === null || n2 === void 0 ? void 0 : n2.errored) !== null && t !== void 0 ? t : null : null;
   }
   function mo(e2) {
-    if (!Q(e2))
-      return null;
-    if (typeof e2.closed == "boolean")
-      return e2.closed;
+    if (!Q(e2)) return null;
+    if (typeof e2.closed == "boolean") return e2.closed;
     let t = e2._writableState, n2 = e2._readableState;
     return typeof t?.closed == "boolean" || typeof n2?.closed == "boolean" ? t?.closed || n2?.closed : typeof e2._closed == "boolean" && hn(e2) ? e2._closed : null;
   }
@@ -15543,8 +15215,7 @@ var V = g((Jf, _n) => {
     return typeof e2._consuming == "boolean" && typeof e2._dumped == "boolean" && ((t = e2.req) === null || t === void 0 ? void 0 : t.upgradeOrConnect) === void 0;
   }
   function Io(e2) {
-    if (!Q(e2))
-      return null;
+    if (!Q(e2)) return null;
     let t = e2._writableState, n2 = e2._readableState, r2 = t || n2;
     return !r2 && bn(e2) || !!(r2 && r2.autoDestroy && r2.emitClose && r2.closed === false);
   }
@@ -15569,8 +15240,7 @@ var Y = g((Qf, rt) => {
     var r2, i2;
     arguments.length === 2 ? (n2 = t, t = wn) : t == null ? t = wn : Po(t, "options"), Lo(n2, "callback"), xo(t.signal, "options.signal"), n2 = yn(n2);
     let o2 = (r2 = t.readable) !== null && r2 !== void 0 ? r2 : nt(e2), l = (i2 = t.writable) !== null && i2 !== void 0 ? i2 : Rn(e2);
-    if (!$o(e2))
-      throw new qo("stream", "Stream", e2);
+    if (!$o(e2)) throw new qo("stream", "Stream", e2);
     let u = e2._writableState, f = e2._readableState, a2 = () => {
       e2.writable || b();
     }, c = vo(e2) && nt(e2) === o2 && Rn(e2) === l, s2 = An(e2, false), b = () => {
@@ -15582,12 +15252,9 @@ var Y = g((Qf, rt) => {
     }, L = Wo(e2), _2 = () => {
       L = true;
       let M = jo(e2) || Co(e2);
-      if (M && typeof M != "boolean")
-        return n2.call(e2, M);
-      if (o2 && !d && nt(e2, true) && !Sn(e2, false))
-        return n2.call(e2, new pn());
-      if (l && !s2 && !An(e2, false))
-        return n2.call(e2, new pn());
+      if (M && typeof M != "boolean") return n2.call(e2, M);
+      if (o2 && !d && nt(e2, true) && !Sn(e2, false)) return n2.call(e2, new pn());
+      if (l && !s2 && !An(e2, false)) return n2.call(e2, new pn());
       n2.call(e2);
     }, p = () => {
       e2.req.on("finish", b);
@@ -15601,8 +15268,7 @@ var Y = g((Qf, rt) => {
         let F = n2;
         I(), F.call(e2, new Do(void 0, { cause: t.signal.reason }));
       };
-      if (t.signal.aborted)
-        oe.nextTick(M);
+      if (t.signal.aborted) oe.nextTick(M);
       else {
         let F = n2;
         n2 = yn((...re) => {
@@ -15626,8 +15292,7 @@ var xn = g((Zf, lt) => {
   "use strict";
   var Nn = globalThis.AbortController, { codes: { ERR_INVALID_ARG_TYPE: pe, ERR_MISSING_ARGS: Go, ERR_OUT_OF_RANGE: Ho }, AbortError: $ } = O(), { validateAbortSignal: le, validateInteger: Vo, validateObject: ae } = _e(), Yo = m().Symbol("kWeak"), { finished: Ko } = Y(), { ArrayPrototypePush: zo, MathFloor: Xo, Number: Jo, NumberIsNaN: Qo, Promise: Tn, PromiseReject: In, PromisePrototypeThen: Zo, Symbol: Dn } = m(), De = Dn("kEmpty"), Mn = Dn("kEof");
   function Oe(e2, t) {
-    if (typeof e2 != "function")
-      throw new pe("fn", ["Function", "AsyncFunction"], e2);
+    if (typeof e2 != "function") throw new pe("fn", ["Function", "AsyncFunction"], e2);
     t != null && ae(t, "options"), t?.signal != null && le(t.signal, "options.signal");
     let n2 = 1;
     return t?.concurrency != null && (n2 = Xo(t.concurrency)), Vo(n2, "concurrency", 1), async function* () {
@@ -15642,10 +15307,8 @@ var xn = g((Zf, lt) => {
         try {
           for await (let I of u) {
             var _2;
-            if (h)
-              return;
-            if (a2.aborted)
-              throw new $();
+            if (h) return;
+            if (a2.aborted) throw new $();
             try {
               I = e2(I, c);
             } catch (M) {
@@ -15669,10 +15332,8 @@ var xn = g((Zf, lt) => {
         for (; ; ) {
           for (; f.length > 0; ) {
             let _2 = await f[0];
-            if (_2 === Mn)
-              return;
-            if (a2.aborted)
-              throw new $();
+            if (_2 === Mn) return;
+            if (a2.aborted) throw new $();
             _2 !== De && (yield _2), f.shift(), d && (d(), d = null);
           }
           await new Tn((_2) => {
@@ -15689,38 +15350,31 @@ var xn = g((Zf, lt) => {
       let n2 = 0;
       for await (let i2 of this) {
         var r2;
-        if (e2 != null && (r2 = e2.signal) !== null && r2 !== void 0 && r2.aborted)
-          throw new $({ cause: e2.signal.reason });
+        if (e2 != null && (r2 = e2.signal) !== null && r2 !== void 0 && r2.aborted) throw new $({ cause: e2.signal.reason });
         yield [n2++, i2];
       }
     }.call(this);
   }
   async function On(e2, t = void 0) {
-    for await (let n2 of ot.call(this, e2, t))
-      return true;
+    for await (let n2 of ot.call(this, e2, t)) return true;
     return false;
   }
   async function tl(e2, t = void 0) {
-    if (typeof e2 != "function")
-      throw new pe("fn", ["Function", "AsyncFunction"], e2);
+    if (typeof e2 != "function") throw new pe("fn", ["Function", "AsyncFunction"], e2);
     return !await On.call(this, async (...n2) => !await e2(...n2), t);
   }
   async function nl(e2, t) {
-    for await (let n2 of ot.call(this, e2, t))
-      return n2;
+    for await (let n2 of ot.call(this, e2, t)) return n2;
   }
   async function rl(e2, t) {
-    if (typeof e2 != "function")
-      throw new pe("fn", ["Function", "AsyncFunction"], e2);
+    if (typeof e2 != "function") throw new pe("fn", ["Function", "AsyncFunction"], e2);
     async function n2(r2, i2) {
       return await e2(r2, i2), De;
     }
-    for await (let r2 of Oe.call(this, n2, t))
-      ;
+    for await (let r2 of Oe.call(this, n2, t)) ;
   }
   function ot(e2, t) {
-    if (typeof e2 != "function")
-      throw new pe("fn", ["Function", "AsyncFunction"], e2);
+    if (typeof e2 != "function") throw new pe("fn", ["Function", "AsyncFunction"], e2);
     async function n2(r2, i2) {
       return await e2(r2, i2) ? r2 : De;
     }
@@ -15733,8 +15387,7 @@ var xn = g((Zf, lt) => {
   };
   async function il(e2, t, n2) {
     var r2;
-    if (typeof e2 != "function")
-      throw new pe("reducer", ["Function", "AsyncFunction"], e2);
+    if (typeof e2 != "function") throw new pe("reducer", ["Function", "AsyncFunction"], e2);
     n2 != null && ae(n2, "options"), n2?.signal != null && le(n2.signal, "options.signal");
     let i2 = arguments.length > 1;
     if (n2 != null && (r2 = n2.signal) !== null && r2 !== void 0 && r2.aborted) {
@@ -15751,12 +15404,10 @@ var xn = g((Zf, lt) => {
     try {
       for await (let a2 of this) {
         var f;
-        if (u = true, n2 != null && (f = n2.signal) !== null && f !== void 0 && f.aborted)
-          throw new $();
+        if (u = true, n2 != null && (f = n2.signal) !== null && f !== void 0 && f.aborted) throw new $();
         i2 ? t = await e2(t, a2, { signal: l }) : (t = a2, i2 = true);
       }
-      if (!u && !i2)
-        throw new it();
+      if (!u && !i2) throw new it();
     } finally {
       o2.abort();
     }
@@ -15767,8 +15418,7 @@ var xn = g((Zf, lt) => {
     let t = [];
     for await (let r2 of this) {
       var n2;
-      if (e2 != null && (n2 = e2.signal) !== null && n2 !== void 0 && n2.aborted)
-        throw new $(void 0, { cause: e2.signal.reason });
+      if (e2 != null && (n2 = e2.signal) !== null && n2 !== void 0 && n2.aborted) throw new $(void 0, { cause: e2.signal.reason });
       zo(t, r2);
     }
     return t;
@@ -15776,26 +15426,21 @@ var xn = g((Zf, lt) => {
   function ll(e2, t) {
     let n2 = Oe.call(this, e2, t);
     return async function* () {
-      for await (let i2 of n2)
-        yield* i2;
+      for await (let i2 of n2) yield* i2;
     }.call(this);
   }
   function qn(e2) {
-    if (e2 = Jo(e2), Qo(e2))
-      return 0;
-    if (e2 < 0)
-      throw new Ho("number", ">= 0", e2);
+    if (e2 = Jo(e2), Qo(e2)) return 0;
+    if (e2 < 0) throw new Ho("number", ">= 0", e2);
     return e2;
   }
   function al(e2, t = void 0) {
     return t != null && ae(t, "options"), t?.signal != null && le(t.signal, "options.signal"), e2 = qn(e2), async function* () {
       var r2;
-      if (t != null && (r2 = t.signal) !== null && r2 !== void 0 && r2.aborted)
-        throw new $();
+      if (t != null && (r2 = t.signal) !== null && r2 !== void 0 && r2.aborted) throw new $();
       for await (let o2 of this) {
         var i2;
-        if (t != null && (i2 = t.signal) !== null && i2 !== void 0 && i2.aborted)
-          throw new $();
+        if (t != null && (i2 = t.signal) !== null && i2 !== void 0 && i2.aborted) throw new $();
         e2-- <= 0 && (yield o2);
       }
     }.call(this);
@@ -15803,16 +15448,12 @@ var xn = g((Zf, lt) => {
   function fl(e2, t = void 0) {
     return t != null && ae(t, "options"), t?.signal != null && le(t.signal, "options.signal"), e2 = qn(e2), async function* () {
       var r2;
-      if (t != null && (r2 = t.signal) !== null && r2 !== void 0 && r2.aborted)
-        throw new $();
+      if (t != null && (r2 = t.signal) !== null && r2 !== void 0 && r2.aborted) throw new $();
       for await (let o2 of this) {
         var i2;
-        if (t != null && (i2 = t.signal) !== null && i2 !== void 0 && i2.aborted)
-          throw new $();
-        if (e2-- > 0)
-          yield o2;
-        else
-          return;
+        if (t != null && (i2 = t.signal) !== null && i2 !== void 0 && i2.aborted) throw new $();
+        if (e2-- > 0) yield o2;
+        else return;
       }
     }.call(this);
   }
@@ -15834,8 +15475,7 @@ var Z2 = g((eu, vn) => {
   function Ln(e2, t, n2) {
     let r2 = false;
     function i2(o2) {
-      if (r2)
-        return;
+      if (r2) return;
       r2 = true;
       let l = e2._readableState, u = e2._writableState;
       Cn(o2, u, l), u && (u.closed = true), l && (l.closed = true), typeof n2 == "function" && n2(o2), o2 ? K.nextTick(wl, e2, o2) : K.nextTick(jn, e2);
@@ -15863,13 +15503,11 @@ var Z2 = g((eu, vn) => {
   }
   function ut(e2, t, n2) {
     let r2 = e2._readableState, i2 = e2._writableState;
-    if (i2 && i2.destroyed || r2 && r2.destroyed)
-      return this;
+    if (i2 && i2.destroyed || r2 && r2.destroyed) return this;
     r2 && r2.autoDestroy || i2 && i2.autoDestroy ? e2.destroy(t) : t && (t.stack, i2 && !i2.errored && (i2.errored = t), r2 && !r2.errored && (r2.errored = t), n2 ? K.nextTick(ft, e2, t) : ft(e2, t));
   }
   function gl(e2, t) {
-    if (typeof e2._construct != "function")
-      return;
+    if (typeof e2._construct != "function") return;
     let n2 = e2._readableState, r2 = e2._writableState;
     n2 && (n2.constructed = false), r2 && (r2.constructed = false), e2.once(at, t), !(e2.listenerCount(at) > 1) && K.nextTick(Sl, e2);
   }
@@ -15942,8 +15580,7 @@ var Le = g((tu, Un) => {
     return n2.on("end", a2), n2.on("close", a2), e2.on("close", a2), e2.emit("pipe", n2), e2;
   };
   function st(e2, t, n2) {
-    if (typeof e2.prependListener == "function")
-      return e2.prependListener(t, n2);
+    if (typeof e2.prependListener == "function") return e2.prependListener(t, n2);
     !e2._events || !e2._events[t] ? e2.on(t, n2) : ml(e2._events[t]) ? e2._events[t].unshift(n2) : e2._events[t] = [n2, e2._events[t]];
   }
   Un.exports = { Stream: xe, prependListener: st };
@@ -15951,20 +15588,17 @@ var Le = g((tu, Un) => {
 var ke = g((nu, Pe) => {
   "use strict";
   var { AbortError: Tl, codes: Il } = O(), Ml = Y(), { ERR_INVALID_ARG_TYPE: Bn } = Il, Nl = (e2, t) => {
-    if (typeof e2 != "object" || !("aborted" in e2))
-      throw new Bn(t, "AbortSignal", e2);
+    if (typeof e2 != "object" || !("aborted" in e2)) throw new Bn(t, "AbortSignal", e2);
   };
   function Dl(e2) {
     return !!(e2 && typeof e2.pipe == "function");
   }
   Pe.exports.addAbortSignal = function(t, n2) {
-    if (Nl(t, "signal"), !Dl(n2))
-      throw new Bn("stream", "stream.Stream", n2);
+    if (Nl(t, "signal"), !Dl(n2)) throw new Bn("stream", "stream.Stream", n2);
     return Pe.exports.addAbortSignalNoValidate(t, n2);
   };
   Pe.exports.addAbortSignalNoValidate = function(e2, t) {
-    if (typeof e2 != "object" || !("aborted" in e2))
-      return t;
+    if (typeof e2 != "object" || !("aborted" in e2)) return t;
     let n2 = () => {
       t.destroy(new Tl(void 0, { cause: e2.reason }));
     };
@@ -15987,8 +15621,7 @@ var Vn = g((iu, Hn) => {
       this.length === 0 && (this.tail = n2), this.head = n2, ++this.length;
     }
     shift() {
-      if (this.length === 0)
-        return;
+      if (this.length === 0) return;
       let t = this.head.data;
       return this.length === 1 ? this.head = this.tail = null : this.head = this.head.next, --this.length, t;
     }
@@ -15996,19 +15629,15 @@ var Vn = g((iu, Hn) => {
       this.head = this.tail = null, this.length = 0;
     }
     join(t) {
-      if (this.length === 0)
-        return "";
+      if (this.length === 0) return "";
       let n2 = this.head, r2 = "" + n2.data;
-      for (; (n2 = n2.next) !== null; )
-        r2 += t + n2.data;
+      for (; (n2 = n2.next) !== null; ) r2 += t + n2.data;
       return r2;
     }
     concat(t) {
-      if (this.length === 0)
-        return dt.alloc(0);
+      if (this.length === 0) return dt.alloc(0);
       let n2 = dt.allocUnsafe(t >>> 0), r2 = this.head, i2 = 0;
-      for (; r2; )
-        We(n2, r2.data, i2), i2 += r2.data.length, r2 = r2.next;
+      for (; r2; ) We(n2, r2.data, i2), i2 += r2.data.length, r2 = r2.next;
       return n2;
     }
     consume(t, n2) {
@@ -16023,15 +15652,13 @@ var Vn = g((iu, Hn) => {
       return this.head.data;
     }
     *[Ol]() {
-      for (let t = this.head; t; t = t.next)
-        yield t.data;
+      for (let t = this.head; t; t = t.next) yield t.data;
     }
     _getString(t) {
       let n2 = "", r2 = this.head, i2 = 0;
       do {
         let o2 = r2.data;
-        if (t > o2.length)
-          n2 += o2, t -= o2.length;
+        if (t > o2.length) n2 += o2, t -= o2.length;
         else {
           t === o2.length ? (n2 += o2, ++i2, r2.next ? this.head = r2.next : this.head = this.tail = null) : (n2 += Gn(o2, 0, t), this.head = r2, r2.data = Gn(o2, t));
           break;
@@ -16044,8 +15671,7 @@ var Vn = g((iu, Hn) => {
       let n2 = dt.allocUnsafe(t), r2 = t, i2 = this.head, o2 = 0;
       do {
         let l = i2.data;
-        if (t > l.length)
-          We(n2, l, r2 - t), t -= l.length;
+        if (t > l.length) We(n2, l, r2 - t), t -= l.length;
         else {
           t === l.length ? (We(n2, l, r2 - t), ++o2, i2.next ? this.head = i2.next : this.head = this.tail = null) : (We(n2, new ql(l.buffer, l.byteOffset, t), r2 - t), this.head = i2, i2.data = l.slice(t));
           break;
@@ -16086,17 +15712,13 @@ var ct = g((lu, Qn) => {
   var zn = __process$, { PromisePrototypeThen: jl, SymbolAsyncIterator: Xn, SymbolIterator: Jn } = m(), { Buffer: $l } = buffer_default2, { ERR_INVALID_ARG_TYPE: vl, ERR_STREAM_NULL_VALUES: Fl } = O().codes;
   function Ul(e2, t, n2) {
     let r2;
-    if (typeof t == "string" || t instanceof $l)
-      return new e2({ objectMode: true, ...n2, read() {
-        this.push(t), this.push(null);
-      } });
+    if (typeof t == "string" || t instanceof $l) return new e2({ objectMode: true, ...n2, read() {
+      this.push(t), this.push(null);
+    } });
     let i2;
-    if (t && t[Xn])
-      i2 = true, r2 = t[Xn]();
-    else if (t && t[Jn])
-      i2 = false, r2 = t[Jn]();
-    else
-      throw new vl("iterable", ["Iterable"], t);
+    if (t && t[Xn]) i2 = true, r2 = t[Xn]();
+    else if (t && t[Jn]) i2 = false, r2 = t[Jn]();
+    else throw new vl("iterable", ["Iterable"], t);
     let o2 = new e2({ objectMode: true, highWaterMark: 1, ...n2 }), l = false;
     o2._read = function() {
       l || (l = true, f());
@@ -16107,8 +15729,7 @@ var ct = g((lu, Qn) => {
       let c = a2 != null, s2 = typeof r2.throw == "function";
       if (c && s2) {
         let { value: b, done: d } = await r2.throw(a2);
-        if (await b, d)
-          return;
+        if (await b, d) return;
       }
       if (typeof r2.return == "function") {
         let { value: b } = await r2.return();
@@ -16119,14 +15740,11 @@ var ct = g((lu, Qn) => {
       for (; ; ) {
         try {
           let { value: a2, done: c } = i2 ? await r2.next() : r2.next();
-          if (c)
-            o2.push(null);
+          if (c) o2.push(null);
           else {
             let s2 = a2 && typeof a2.then == "function" ? await a2 : a2;
-            if (s2 === null)
-              throw l = false, new Fl();
-            if (o2.push(s2))
-              continue;
+            if (s2 === null) throw l = false, new Fl();
+            if (o2.push(s2)) continue;
             l = false;
           }
         } catch (a2) {
@@ -16154,8 +15772,7 @@ var we = g((au, dr) => {
     typeof n2 != "boolean" && (n2 = t instanceof v()), this.objectMode = !!(e2 && e2.objectMode), n2 && (this.objectMode = this.objectMode || !!(e2 && e2.readableObjectMode)), this.highWaterMark = e2 ? ra(this, e2, "readableHighWaterMark", n2) : ia(false), this.buffer = new na(), this.length = 0, this.pipes = [], this.flowing = null, this.ended = false, this.endEmitted = false, this.reading = false, this.constructed = true, this.sync = true, this.needReadable = false, this.emittedReadable = false, this.readableListening = false, this.resumeScheduled = false, this[ee] = null, this.errorEmitted = false, this.emitClose = !e2 || e2.emitClose !== false, this.autoDestroy = !e2 || e2.autoDestroy !== false, this.destroyed = false, this.errored = null, this.closed = false, this.closeEmitted = false, this.defaultEncoding = e2 && e2.defaultEncoding || "utf8", this.awaitDrainWriters = null, this.multiAwaitDrain = false, this.readingMore = false, this.dataEmitted = false, this.decoder = null, this.encoding = null, e2 && e2.encoding && (this.decoder = new rr(e2.encoding), this.encoding = e2.encoding);
   }
   function w(e2) {
-    if (!(this instanceof w))
-      return new w(e2);
+    if (!(this instanceof w)) return new w(e2);
     let t = this instanceof v();
     this._readableState = new yt(e2, this, t), e2 && (typeof e2.read == "function" && (this._read = e2.read), typeof e2.destroy == "function" && (this._destroy = e2.destroy), typeof e2.construct == "function" && (this._construct = e2.construct), e2.signal && !t && ea(e2.signal, this)), z.call(this, e2), ue.construct(this, () => {
       this._readableState.needReadable && je(this, this._readableState);
@@ -16178,28 +15795,19 @@ var we = g((au, dr) => {
   function ir(e2, t, n2, r2) {
     y("readableAddChunk", t);
     let i2 = e2._readableState, o2;
-    if (i2.objectMode || (typeof t == "string" ? (n2 = n2 || i2.defaultEncoding, i2.encoding !== n2 && (r2 && i2.encoding ? t = ht.from(t, n2).toString(i2.encoding) : (t = ht.from(t, n2), n2 = ""))) : t instanceof ht ? n2 = "" : z._isUint8Array(t) ? (t = z._uint8ArrayToBuffer(t), n2 = "") : t != null && (o2 = new oa("chunk", ["string", "Buffer", "Uint8Array"], t))), o2)
-      fe(e2, o2);
-    else if (t === null)
-      i2.reading = false, ba(e2, i2);
-    else if (i2.objectMode || t && t.length > 0)
-      if (r2)
-        if (i2.endEmitted)
-          fe(e2, new ua());
-        else {
-          if (i2.destroyed || i2.errored)
-            return false;
-          _t(e2, i2, t, true);
-        }
-      else if (i2.ended)
-        fe(e2, new fa());
-      else {
-        if (i2.destroyed || i2.errored)
-          return false;
-        i2.reading = false, i2.decoder && !n2 ? (t = i2.decoder.write(t), i2.objectMode || t.length !== 0 ? _t(e2, i2, t, false) : je(e2, i2)) : _t(e2, i2, t, false);
-      }
-    else
-      r2 || (i2.reading = false, je(e2, i2));
+    if (i2.objectMode || (typeof t == "string" ? (n2 = n2 || i2.defaultEncoding, i2.encoding !== n2 && (r2 && i2.encoding ? t = ht.from(t, n2).toString(i2.encoding) : (t = ht.from(t, n2), n2 = ""))) : t instanceof ht ? n2 = "" : z._isUint8Array(t) ? (t = z._uint8ArrayToBuffer(t), n2 = "") : t != null && (o2 = new oa("chunk", ["string", "Buffer", "Uint8Array"], t))), o2) fe(e2, o2);
+    else if (t === null) i2.reading = false, ba(e2, i2);
+    else if (i2.objectMode || t && t.length > 0) if (r2) if (i2.endEmitted) fe(e2, new ua());
+    else {
+      if (i2.destroyed || i2.errored) return false;
+      _t(e2, i2, t, true);
+    }
+    else if (i2.ended) fe(e2, new fa());
+    else {
+      if (i2.destroyed || i2.errored) return false;
+      i2.reading = false, i2.decoder && !n2 ? (t = i2.decoder.write(t), i2.objectMode || t.length !== 0 ? _t(e2, i2, t, false) : je(e2, i2)) : _t(e2, i2, t, false);
+    }
+    else r2 || (i2.reading = false, je(e2, i2));
     return !i2.ended && (i2.length < i2.highWaterMark || i2.length === 0);
   }
   function _t(e2, t, n2, r2) {
@@ -16213,14 +15821,12 @@ var we = g((au, dr) => {
     let t = new rr(e2);
     this._readableState.decoder = t, this._readableState.encoding = this._readableState.decoder.encoding;
     let n2 = this._readableState.buffer, r2 = "";
-    for (let i2 of n2)
-      r2 += t.write(i2);
+    for (let i2 of n2) r2 += t.write(i2);
     return n2.clear(), r2 !== "" && n2.push(r2), this._readableState.length = r2.length, this;
   };
   var ca = 1073741824;
   function ha(e2) {
-    if (e2 > ca)
-      throw new aa("size", "<= 1GiB", e2);
+    if (e2 > ca) throw new aa("size", "<= 1GiB", e2);
     return e2--, e2 |= e2 >>> 1, e2 |= e2 >>> 2, e2 |= e2 >>> 4, e2 |= e2 >>> 8, e2 |= e2 >>> 16, e2++, e2;
   }
   function er(e2, t) {
@@ -16229,13 +15835,10 @@ var we = g((au, dr) => {
   w.prototype.read = function(e2) {
     y("read", e2), e2 === void 0 ? e2 = NaN : Gl(e2) || (e2 = Vl(e2, 10));
     let t = this._readableState, n2 = e2;
-    if (e2 > t.highWaterMark && (t.highWaterMark = ha(e2)), e2 !== 0 && (t.emittedReadable = false), e2 === 0 && t.needReadable && ((t.highWaterMark !== 0 ? t.length >= t.highWaterMark : t.length > 0) || t.ended))
-      return y("read: emitReadable", t.length, t.ended), t.length === 0 && t.ended ? pt(this) : $e(this), null;
-    if (e2 = er(e2, t), e2 === 0 && t.ended)
-      return t.length === 0 && pt(this), null;
+    if (e2 > t.highWaterMark && (t.highWaterMark = ha(e2)), e2 !== 0 && (t.emittedReadable = false), e2 === 0 && t.needReadable && ((t.highWaterMark !== 0 ? t.length >= t.highWaterMark : t.length > 0) || t.ended)) return y("read: emitReadable", t.length, t.ended), t.length === 0 && t.ended ? pt(this) : $e(this), null;
+    if (e2 = er(e2, t), e2 === 0 && t.ended) return t.length === 0 && pt(this), null;
     let r2 = t.needReadable;
-    if (y("need readable", r2), (t.length === 0 || t.length - e2 < t.highWaterMark) && (r2 = true, y("length less than watermark", r2)), t.ended || t.reading || t.destroyed || t.errored || !t.constructed)
-      r2 = false, y("reading, ended or constructing", r2);
+    if (y("need readable", r2), (t.length === 0 || t.length - e2 < t.highWaterMark) && (r2 = true, y("length less than watermark", r2)), t.ended || t.reading || t.destroyed || t.errored || !t.constructed) r2 = false, y("reading, ended or constructing", r2);
     else if (r2) {
       y("do read"), t.reading = true, t.sync = true, t.length === 0 && (t.needReadable = true);
       try {
@@ -16271,8 +15874,7 @@ var we = g((au, dr) => {
   function _a(e2, t) {
     for (; !t.reading && !t.ended && (t.length < t.highWaterMark || t.flowing && t.length === 0); ) {
       let n2 = t.length;
-      if (y("maybeReadMore read 0"), e2.read(0), n2 === t.length)
-        break;
+      if (y("maybeReadMore read 0"), e2.read(0), n2 === t.length) break;
     }
     t.readingMore = false;
   }
@@ -16331,13 +15933,11 @@ var we = g((au, dr) => {
   }
   w.prototype.unpipe = function(e2) {
     let t = this._readableState, n2 = { hasUnpiped: false };
-    if (t.pipes.length === 0)
-      return this;
+    if (t.pipes.length === 0) return this;
     if (!e2) {
       let i2 = t.pipes;
       t.pipes = [], this.pause();
-      for (let o2 = 0; o2 < i2.length; o2++)
-        i2[o2].emit("unpipe", this, { hasUnpiped: false });
+      for (let o2 = 0; o2 < i2.length; o2++) i2[o2].emit("unpipe", this, { hasUnpiped: false });
       return this;
     }
     let r2 = Bl(t.pipes, e2);
@@ -16379,8 +15979,7 @@ var we = g((au, dr) => {
   };
   function ar(e2) {
     let t = e2._readableState;
-    for (y("flow", t.flowing); t.flowing && e2.read() !== null; )
-      ;
+    for (y("flow", t.flowing); t.flowing && e2.read() !== null; ) ;
   }
   w.prototype.wrap = function(e2) {
     let t = false;
@@ -16427,13 +16026,10 @@ var we = g((au, dr) => {
     try {
       for (; ; ) {
         let l = e2.destroyed ? null : e2.read();
-        if (l !== null)
-          yield l;
+        if (l !== null) yield l;
         else {
-          if (i2)
-            throw i2;
-          if (i2 === null)
-            return;
+          if (i2) throw i2;
+          if (i2 === null) return;
           await new Kl(r2);
         }
       }
@@ -16486,8 +16082,7 @@ var we = g((au, dr) => {
   } } });
   w._fromList = ur;
   function ur(e2, t) {
-    if (t.length === 0)
-      return null;
+    if (t.length === 0) return null;
     let n2;
     return t.objectMode ? n2 = t.buffer.shift() : !e2 || e2 >= t.length ? (t.decoder ? n2 = t.buffer.join("") : t.buffer.length === 1 ? n2 = t.buffer.first() : n2 = t.buffer.concat(t.length), t.buffer.clear()) : n2 = t.buffer.consume(e2, t.decoder), n2;
   }
@@ -16497,8 +16092,7 @@ var we = g((au, dr) => {
   }
   function Ea(e2, t) {
     if (y("endReadableNT", e2.endEmitted, e2.length), !e2.errored && !e2.closeEmitted && !e2.endEmitted && e2.length === 0) {
-      if (e2.endEmitted = true, t.emit("end"), t.writable && t.allowHalfOpen === false)
-        W.nextTick(Ra, t);
+      if (e2.endEmitted = true, t.emit("end"), t.writable && t.allowHalfOpen === false) W.nextTick(Ra, t);
       else if (e2.autoDestroy) {
         let n2 = t._writableState;
         (!n2 || n2.autoDestroy && (n2.finished || n2.writable === false)) && t.destroy();
@@ -16554,8 +16148,7 @@ var Tt = g((fu, Ar) => {
   } });
   function S(e2) {
     let t = this instanceof v();
-    if (!t && !_r(S, this))
-      return new S(e2);
+    if (!t && !_r(S, this)) return new S(e2);
     this._writableState = new Se(e2, this, t), e2 && (typeof e2.write == "function" && (this._write = e2.write), typeof e2.writev == "function" && (this._writev = e2.writev), typeof e2.destroy == "function" && (this._destroy = e2.destroy), typeof e2.final == "function" && (this._final = e2.final), typeof e2.construct == "function" && (this._construct = e2.construct), e2.signal && Da(e2.signal, this)), ye.call(this, e2), Be.construct(this, () => {
       let n2 = this._writableState;
       n2.writing || At(this, n2), mt(this, n2);
@@ -16569,26 +16162,17 @@ var Tt = g((fu, Ar) => {
   };
   function Sr(e2, t, n2, r2) {
     let i2 = e2._writableState;
-    if (typeof n2 == "function")
-      r2 = n2, n2 = i2.defaultEncoding;
+    if (typeof n2 == "function") r2 = n2, n2 = i2.defaultEncoding;
     else {
-      if (!n2)
-        n2 = i2.defaultEncoding;
-      else if (n2 !== "buffer" && !ve.isEncoding(n2))
-        throw new gr(n2);
+      if (!n2) n2 = i2.defaultEncoding;
+      else if (n2 !== "buffer" && !ve.isEncoding(n2)) throw new gr(n2);
       typeof r2 != "function" && (r2 = Et);
     }
-    if (t === null)
-      throw new Wa();
-    if (!i2.objectMode)
-      if (typeof t == "string")
-        i2.decodeStrings !== false && (t = ve.from(t, n2), n2 = "buffer");
-      else if (t instanceof ve)
-        n2 = "buffer";
-      else if (ye._isUint8Array(t))
-        t = ye._uint8ArrayToBuffer(t), n2 = "buffer";
-      else
-        throw new xa("chunk", ["string", "Buffer", "Uint8Array"], t);
+    if (t === null) throw new Wa();
+    if (!i2.objectMode) if (typeof t == "string") i2.decodeStrings !== false && (t = ve.from(t, n2), n2 = "buffer");
+    else if (t instanceof ve) n2 = "buffer";
+    else if (ye._isUint8Array(t)) t = ye._uint8ArrayToBuffer(t), n2 = "buffer";
+    else throw new xa("chunk", ["string", "Buffer", "Uint8Array"], t);
     let o2;
     return i2.ending ? o2 = new Ca() : i2.destroyed && (o2 = new ge("write")), o2 ? (te.nextTick(r2, o2), se(e2, o2, true), o2) : (i2.pendingcb++, ja(e2, i2, t, n2, r2));
   }
@@ -16603,8 +16187,7 @@ var Tt = g((fu, Ar) => {
     e2.corked && (e2.corked--, e2.writing || At(this, e2));
   };
   S.prototype.setDefaultEncoding = function(t) {
-    if (typeof t == "string" && (t = Ta(t)), !ve.isEncoding(t))
-      throw new gr(t);
+    if (typeof t == "string" && (t = Ta(t)), !ve.isEncoding(t)) throw new gr(t);
     return this._writableState.defaultEncoding = t, this;
   };
   function ja(e2, t, n2, r2, i2) {
@@ -16631,13 +16214,11 @@ var Tt = g((fu, Ar) => {
     return t.afterWriteTickInfo = null, Er(e2, t, n2, r2);
   }
   function Er(e2, t, n2, r2) {
-    for (!t.ending && !e2.destroyed && t.length === 0 && t.needDrain && (t.needDrain = false, e2.emit("drain")); n2-- > 0; )
-      t.pendingcb--, r2();
+    for (!t.ending && !e2.destroyed && t.length === 0 && t.needDrain && (t.needDrain = false, e2.emit("drain")); n2-- > 0; ) t.pendingcb--, r2();
     t.destroyed && Rt(t), mt(e2, t);
   }
   function Rt(e2) {
-    if (e2.writing)
-      return;
+    if (e2.writing) return;
     for (let i2 = e2.bufferedIndex; i2 < e2.buffered.length; ++i2) {
       var t;
       let { chunk: o2, callback: l } = e2.buffered[i2], u = e2.objectMode ? 1 : o2.length;
@@ -16651,17 +16232,14 @@ var Tt = g((fu, Ar) => {
     Ue(e2);
   }
   function At(e2, t) {
-    if (t.corked || t.bufferProcessing || t.destroyed || !t.constructed)
-      return;
+    if (t.corked || t.bufferProcessing || t.destroyed || !t.constructed) return;
     let { buffered: n2, bufferedIndex: r2, objectMode: i2 } = t, o2 = n2.length - r2;
-    if (!o2)
-      return;
+    if (!o2) return;
     let l = r2;
     if (t.bufferProcessing = true, o2 > 1 && e2._writev) {
       t.pendingcb -= o2 - 1;
       let u = t.allNoop ? Et : (a2) => {
-        for (let c = l; c < n2.length; ++c)
-          n2[c].callback(a2);
+        for (let c = l; c < n2.length; ++c) n2[c].callback(a2);
       }, f = t.allNoop && l === 0 ? n2 : br(n2, l);
       f.allBuffers = t.allBuffers, cr(e2, t, true, t.length, f, "", u), Ue(t);
     } else {
@@ -16676,10 +16254,8 @@ var Tt = g((fu, Ar) => {
     t.bufferProcessing = false;
   }
   S.prototype._write = function(e2, t, n2) {
-    if (this._writev)
-      this._writev([{ chunk: e2, encoding: t }], n2);
-    else
-      throw new La("_write()");
+    if (this._writev) this._writev([{ chunk: e2, encoding: t }], n2);
+    else throw new La("_write()");
   };
   S.prototype._writev = null;
   S.prototype.end = function(e2, t, n2) {
@@ -16704,11 +16280,9 @@ var Tt = g((fu, Ar) => {
       }
       if (n2 = true, t.pendingcb--, i2) {
         let o2 = t[de].splice(0);
-        for (let l = 0; l < o2.length; l++)
-          o2[l](i2);
+        for (let l = 0; l < o2.length; l++) o2[l](i2);
         se(e2, i2, t.sync);
-      } else
-        Fe(t) && (t.prefinished = true, e2.emit("prefinish"), t.pendingcb++, te.nextTick(St, e2, t));
+      } else Fe(t) && (t.prefinished = true, e2.emit("prefinish"), t.pendingcb++, te.nextTick(St, e2, t));
     }
     t.sync = true, t.pendingcb++;
     try {
@@ -16729,8 +16303,7 @@ var Tt = g((fu, Ar) => {
   function St(e2, t) {
     t.pendingcb--, t.finished = true;
     let n2 = t[de].splice(0);
-    for (let r2 = 0; r2 < n2.length; r2++)
-      n2[r2]();
+    for (let r2 = 0; r2 < n2.length; r2++) n2[r2]();
     if (e2.emit("finish"), t.autoDestroy) {
       let r2 = e2._readableState;
       (!r2 || r2.autoDestroy && (r2.endEmitted || r2.readable === false)) && e2.destroy();
@@ -16803,23 +16376,17 @@ var kr = g((uu, Pr) => {
     }
   };
   Pr.exports = function e2(t, n2) {
-    if (Ka(t))
-      return t;
-    if (Tr(t))
-      return Ge({ readable: t });
-    if (Ir(t))
-      return Ge({ writable: t });
-    if (Ya(t))
-      return Ge({ writable: false, readable: false });
+    if (Ka(t)) return t;
+    if (Tr(t)) return Ge({ readable: t });
+    if (Ir(t)) return Ge({ writable: t });
+    if (Ya(t)) return Ge({ writable: false, readable: false });
     if (typeof t == "function") {
       let { value: i2, write: o2, final: l, destroy: u } = ef(t);
-      if (mr(i2))
-        return Or(ne, i2, { objectMode: true, write: o2, final: l, destroy: u });
+      if (mr(i2)) return Or(ne, i2, { objectMode: true, write: o2, final: l, destroy: u });
       let f = i2?.then;
       if (typeof f == "function") {
         let a2, c = xr(f, i2, (s2) => {
-          if (s2 != null)
-            throw new Nr("nully", "body", s2);
+          if (s2 != null) throw new Nr("nully", "body", s2);
         }, (s2) => {
           ce(a2, s2);
         });
@@ -16835,10 +16402,8 @@ var kr = g((uu, Pr) => {
       }
       throw new Nr("Iterable, AsyncIterable or AsyncFunction", n2, i2);
     }
-    if (Qa(t))
-      return e2(t.arrayBuffer());
-    if (mr(t))
-      return Or(ne, t, { objectMode: true, writable: false });
+    if (Qa(t)) return e2(t.arrayBuffer());
+    if (mr(t)) return Or(ne, t, { objectMode: true, writable: false });
     if (typeof t?.writable == "object" || typeof t?.readable == "object") {
       let i2 = t != null && t.readable ? Tr(t?.readable) ? t?.readable : e2(t.readable) : void 0, o2 = t != null && t.writable ? Ir(t?.writable) ? t?.writable : e2(t.writable) : void 0;
       return Ge({ readable: i2, writable: o2 });
@@ -16862,10 +16427,8 @@ var kr = g((uu, Pr) => {
         let l = t;
         t = null;
         let { chunk: u, done: f, cb: a2 } = await l;
-        if (It.nextTick(a2), f)
-          return;
-        if (i2.aborted)
-          throw new Lr(void 0, { cause: i2.reason });
+        if (It.nextTick(a2), f) return;
+        if (i2.aborted) throw new Lr(void 0, { cause: i2.reason });
         ({ promise: t, resolve: n2 } = Dr()), yield u;
       }
     }(), { signal: i2 }), write(l, u, f) {
@@ -16916,8 +16479,7 @@ var kr = g((uu, Pr) => {
           u = a2._read;
           return;
         }
-        if (!a2.push(s2))
-          return;
+        if (!a2.push(s2)) return;
       }
     }), a2._destroy = function(s2, b) {
       !s2 && f !== null && (s2 = new Lr()), u = null, o2 = null, l = null, f === null ? b(s2) : (f = b, ce(n2, s2), ce(t, s2));
@@ -16939,8 +16501,7 @@ var v = g((su, jr) => {
     }
   }
   function C2(e2) {
-    if (!(this instanceof C2))
-      return new C2(e2);
+    if (!(this instanceof C2)) return new C2(e2);
     Dt.call(this, e2), x.call(this, e2), e2 ? (this.allowHalfOpen = e2.allowHalfOpen !== false, e2.readable === false && (this._readableState.readable = false, this._readableState.ended = true, this._readableState.endEmitted = true), e2.writable === false && (this._writableState.writable = false, this._writableState.ending = true, this._writableState.ended = true, this._writableState.finished = true)) : this.allowHalfOpen = true;
   }
   tf(C2.prototype, { writable: { __proto__: null, ...B(x.prototype, "writable") }, writableHighWaterMark: { __proto__: null, ...B(x.prototype, "writableHighWaterMark") }, writableObjectMode: { __proto__: null, ...B(x.prototype, "writableObjectMode") }, writableBuffer: { __proto__: null, ...B(x.prototype, "writableBuffer") }, writableLength: { __proto__: null, ...B(x.prototype, "writableLength") }, writableFinished: { __proto__: null, ...B(x.prototype, "writableFinished") }, writableCorked: { __proto__: null, ...B(x.prototype, "writableCorked") }, writableEnded: { __proto__: null, ...B(x.prototype, "writableEnded") }, writableNeedDrain: { __proto__: null, ...B(x.prototype, "writableNeedDrain") }, destroyed: { __proto__: null, get() {
@@ -16972,8 +16533,7 @@ var xt = g((du, vr) => {
   $r(G, qt);
   var Ee = rf("kCallback");
   function G(e2) {
-    if (!(this instanceof G))
-      return new G(e2);
+    if (!(this instanceof G)) return new G(e2);
     let t = e2 ? lf(this, e2, "readableHighWaterMark", true) : null;
     t === 0 && (e2 = { ...e2, highWaterMark: null, readableHighWaterMark: t, writableHighWaterMark: e2.writableHighWaterMark || 0 }), qt.call(this, e2), this._readableState.sync = false, this[Ee] = null, e2 && (typeof e2.transform == "function" && (this._transform = e2.transform), typeof e2.flush == "function" && (this._flush = e2.flush)), this.on("prefinish", af);
   }
@@ -17018,8 +16578,7 @@ var Pt = g((cu, Ur) => {
   Fr(he.prototype, Lt.prototype);
   Fr(he, Lt);
   function he(e2) {
-    if (!(this instanceof he))
-      return new he(e2);
+    if (!(this instanceof he)) return new he(e2);
     Lt.call(this, e2);
   }
   he.prototype._transform = function(e2, t, n2) {
@@ -17044,10 +16603,8 @@ var Ye = g((hu, zr) => {
     return yf(e2[e2.length - 1], "streams[stream.length - 1]"), e2.pop();
   }
   function Rf(e2) {
-    if (be(e2))
-      return e2;
-    if ($t(e2))
-      return Af(e2);
+    if (be(e2)) return e2;
+    if ($t(e2)) return Af(e2);
     throw new Yr("val", ["Readable", "Iterable", "AsyncIterable"], e2);
   }
   async function* Af(e2) {
@@ -17068,8 +16625,7 @@ var Ye = g((hu, zr) => {
     let f = Ve(t, { readable: false }, l);
     try {
       t.writableNeedDrain && await u();
-      for await (let a2 of e2)
-        t.write(a2) || await u();
+      for await (let a2 of e2) t.write(a2) || await u();
       r2 && t.end(), await u(), n2();
     } catch (a2) {
       n2(i2 !== a2 ? hf(i2, a2) : a2);
@@ -17081,8 +16637,7 @@ var Ye = g((hu, zr) => {
     return Kr(e2, df(Ef(e2)));
   }
   function Kr(e2, t, n2) {
-    if (e2.length === 1 && ff(e2[0]) && (e2 = e2[0]), e2.length < 2)
-      throw new bf("streams");
+    if (e2.length === 1 && ff(e2[0]) && (e2 = e2[0]), e2.length < 2) throw new bf("streams");
     let r2 = new Sf(), i2 = r2.signal, o2 = n2?.signal, l = [];
     gf(o2, "options.signal");
     function u() {
@@ -17095,8 +16650,7 @@ var Ye = g((hu, zr) => {
     }
     function d(_2, p) {
       if (_2 && (!f || f.code === "ERR_STREAM_PREMATURE_CLOSE") && (f = _2), !(!f && !p)) {
-        for (; c.length; )
-          c.shift()(f);
+        for (; c.length; ) c.shift()(f);
         o2?.removeEventListener("abort", u), r2.abort(), p && (f || l.forEach((I) => I()), He.nextTick(t, f, a2));
       }
     }
@@ -17116,46 +16670,35 @@ var Ye = g((hu, zr) => {
           p.removeListener("error", P);
         });
       }
-      if (_2 === 0)
-        if (typeof p == "function") {
-          if (h = p({ signal: i2 }), !be(h))
-            throw new kt("Iterable, AsyncIterable or Stream", "source", h);
-        } else
-          be(p) || $t(p) ? h = p : h = Br.from(p);
-      else if (typeof p == "function")
-        if (h = Rf(h), h = p(h, { signal: i2 }), I) {
-          if (!be(h, true))
-            throw new kt("AsyncIterable", `transform[${_2 - 1}]`, h);
-        } else {
-          var D;
-          Ct || (Ct = Pt());
-          let P = new Ct({ objectMode: true }), U = (D = h) === null || D === void 0 ? void 0 : D.then;
-          if (typeof U == "function")
-            s2++, U.call(h, (ie) => {
-              a2 = ie, ie != null && P.write(ie), F && P.end(), He.nextTick(b);
-            }, (ie) => {
-              P.destroy(ie), He.nextTick(b, ie);
-            });
-          else if (be(h, true))
-            s2++, Vr(h, P, b, { end: F });
-          else
-            throw new kt("AsyncIterable or Promise", "destination", h);
-          h = P;
-          let { destroy: ze, cleanup: _i } = Hr(h, false, true);
-          c.push(ze), re && l.push(_i);
-        }
+      if (_2 === 0) if (typeof p == "function") {
+        if (h = p({ signal: i2 }), !be(h)) throw new kt("Iterable, AsyncIterable or Stream", "source", h);
+      } else be(p) || $t(p) ? h = p : h = Br.from(p);
+      else if (typeof p == "function") if (h = Rf(h), h = p(h, { signal: i2 }), I) {
+        if (!be(h, true)) throw new kt("AsyncIterable", `transform[${_2 - 1}]`, h);
+      } else {
+        var D;
+        Ct || (Ct = Pt());
+        let P = new Ct({ objectMode: true }), U = (D = h) === null || D === void 0 ? void 0 : D.then;
+        if (typeof U == "function") s2++, U.call(h, (ie) => {
+          a2 = ie, ie != null && P.write(ie), F && P.end(), He.nextTick(b);
+        }, (ie) => {
+          P.destroy(ie), He.nextTick(b, ie);
+        });
+        else if (be(h, true)) s2++, Vr(h, P, b, { end: F });
+        else throw new kt("AsyncIterable or Promise", "destination", h);
+        h = P;
+        let { destroy: ze, cleanup: _i } = Hr(h, false, true);
+        c.push(ze), re && l.push(_i);
+      }
       else if (Gr(p)) {
         if ($t(h)) {
           s2 += 2;
           let P = Tf(h, p, b, { end: F });
           Wt(p) && re && l.push(P);
-        } else if (be(h))
-          s2++, Vr(h, p, b, { end: F });
-        else
-          throw new Yr("val", ["Readable", "Iterable", "AsyncIterable"], h);
+        } else if (be(h)) s2++, Vr(h, p, b, { end: F });
+        else throw new Yr("val", ["Readable", "Iterable", "AsyncIterable"], h);
         h = p;
-      } else
-        h = Br.from(p);
+      } else h = Br.from(p);
     }
     return (i2 != null && i2.aborted || o2 != null && o2.aborted) && He.nextTick(u), h;
   }
@@ -17176,22 +16719,17 @@ var ei = g((bu, Zr) => {
   "use strict";
   var { pipeline: If } = Ye(), Ke = v(), { destroyer: Mf } = Z2(), { isNodeStream: Nf, isReadable: Xr, isWritable: Jr } = V(), { AbortError: Df, codes: { ERR_INVALID_ARG_VALUE: Qr, ERR_MISSING_ARGS: Of } } = O();
   Zr.exports = function(...t) {
-    if (t.length === 0)
-      throw new Of("streams");
-    if (t.length === 1)
-      return Ke.from(t[0]);
+    if (t.length === 0) throw new Of("streams");
+    if (t.length === 1) return Ke.from(t[0]);
     let n2 = [...t];
     if (typeof t[0] == "function" && (t[0] = Ke.from(t[0])), typeof t[t.length - 1] == "function") {
       let d = t.length - 1;
       t[d] = Ke.from(t[d]);
     }
-    for (let d = 0; d < t.length; ++d)
-      if (!!Nf(t[d])) {
-        if (d < t.length - 1 && !Xr(t[d]))
-          throw new Qr(`streams[${d}]`, n2[d], "must be readable");
-        if (d > 0 && !Jr(t[d]))
-          throw new Qr(`streams[${d}]`, n2[d], "must be writable");
-      }
+    for (let d = 0; d < t.length; ++d) if (!!Nf(t[d])) {
+      if (d < t.length - 1 && !Xr(t[d])) throw new Qr(`streams[${d}]`, n2[d], "must be readable");
+      if (d > 0 && !Jr(t[d])) throw new Qr(`streams[${d}]`, n2[d], "must be writable");
+    }
     let r2, i2, o2, l, u;
     function f(d) {
       let h = l;
@@ -17226,8 +16764,7 @@ var ei = g((bu, Zr) => {
           o2 = u._read;
           return;
         }
-        if (!u.push(d))
-          return;
+        if (!u.push(d)) return;
       }
     }), u._destroy = function(d, h) {
       !d && l !== null && (d = new Df()), o2 = null, r2 = null, i2 = null, l === null ? h(d) : (l = h, Mf(c, d));
@@ -17259,8 +16796,7 @@ var di = g((pu, si) => {
   R.Readable = we();
   for (let e2 of ii(ni)) {
     let n2 = function(...r2) {
-      if (new.target)
-        throw ai();
+      if (new.target) throw ai();
       return R.Readable.from(oi(t, this, r2));
     };
     Uf = n2;
@@ -17270,8 +16806,7 @@ var di = g((pu, si) => {
   var Uf;
   for (let e2 of ii(ri)) {
     let n2 = function(...i2) {
-      if (new.target)
-        throw ai();
+      if (new.target) throw ai();
       return oi(t, this, i2);
     };
     Uf = n2;
@@ -17939,10 +17474,8 @@ var stdout = stdio.stdout = createWritableStdioStream(
   "stdout"
 );
 function _guessStdinType(fd) {
-  if (typeof fd !== "number" || fd < 0)
-    return "UNKNOWN";
-  if (Deno.isatty?.(fd))
-    return "TTY";
+  if (typeof fd !== "number" || fd < 0) return "UNKNOWN";
+  if (Deno.isatty?.(fd)) return "TTY";
   try {
     const fileInfo = Deno.fstatSync?.(fd);
     if (Deno.build.os !== "windows") {
@@ -17959,13 +17492,11 @@ function _guessStdinType(fd) {
       }
     }
     if (fileInfo.isFile) {
-      if (fileInfo.birthtime.valueOf() === 116444736e5)
-        return "PIPE";
+      if (fileInfo.birthtime.valueOf() === 116444736e5) return "PIPE";
       return "FILE";
     }
   } catch (e2) {
-    if (Deno.build.os === "windows" && e2.code === "EISDIR")
-      return "FILE";
+    if (Deno.build.os === "windows" && e2.code === "EISDIR") return "FILE";
   }
   return "UNKNOWN";
 }
@@ -18623,10 +18154,8 @@ function timingSafeEqual(a2, b) {
 
 // https://deno.land/std@0.177.0/node/internal_binding/_timingSafeEqual.ts
 var timingSafeEqual2 = (a2, b) => {
-  if (a2 instanceof Buffer3)
-    a2 = new DataView(a2.buffer);
-  if (a2 instanceof Buffer3)
-    b = new DataView(a2.buffer);
+  if (a2 instanceof Buffer3) a2 = new DataView(a2.buffer);
+  if (a2 instanceof Buffer3) b = new DataView(a2.buffer);
   return timingSafeEqual(a2, b);
 };
 
@@ -18996,28 +18525,6 @@ var ConnectionWrap = class extends LibuvStreamWrap {
   }
 };
 
-// https://deno.land/std@0.177.0/async/deferred.ts
-function deferred() {
-  let methods;
-  let state = "pending";
-  const promise = new Promise((resolve7, reject) => {
-    methods = {
-      async resolve(value) {
-        await value;
-        state = "fulfilled";
-        resolve7(value);
-      },
-      // deno-lint-ignore no-explicit-any
-      reject(reason) {
-        state = "rejected";
-        reject(reason);
-      }
-    };
-  });
-  Object.defineProperty(promise, "state", { get: () => state });
-  return Object.assign(promise, methods);
-}
-
 // https://deno.land/std@0.177.0/async/delay.ts
 function delay(ms, options = {}) {
   const { signal, persistent } = options;
@@ -19047,53 +18554,6 @@ function delay(ms, options = {}) {
     }
   });
 }
-
-// https://deno.land/std@0.177.0/async/mux_async_iterator.ts
-var MuxAsyncIterator = class {
-  #iteratorCount = 0;
-  #yields = [];
-  // deno-lint-ignore no-explicit-any
-  #throws = [];
-  #signal = deferred();
-  add(iterable) {
-    ++this.#iteratorCount;
-    this.#callIteratorNext(iterable[Symbol.asyncIterator]());
-  }
-  async #callIteratorNext(iterator) {
-    try {
-      const { value, done } = await iterator.next();
-      if (done) {
-        --this.#iteratorCount;
-      } else {
-        this.#yields.push({ iterator, value });
-      }
-    } catch (e2) {
-      this.#throws.push(e2);
-    }
-    this.#signal.resolve();
-  }
-  async *iterate() {
-    while (this.#iteratorCount > 0) {
-      await this.#signal;
-      for (let i2 = 0; i2 < this.#yields.length; i2++) {
-        const { iterator, value } = this.#yields[i2];
-        yield value;
-        this.#callIteratorNext(iterator);
-      }
-      if (this.#throws.length) {
-        for (const e2 of this.#throws) {
-          throw e2;
-        }
-        this.#throws.length = 0;
-      }
-      this.#yields.length = 0;
-      this.#signal = deferred();
-    }
-  }
-  [Symbol.asyncIterator]() {
-    return this.iterate();
-  }
-};
 
 // https://deno.land/std@0.177.0/node/internal_binding/_listen.ts
 function ceilPowOf2(n2) {
@@ -20869,12 +20329,9 @@ function normalizeString2(path5, allowAboveRoot, separator, isPathSeparator3) {
   let dots = 0;
   let code;
   for (let i2 = 0, len = path5.length; i2 <= len; ++i2) {
-    if (i2 < len)
-      code = path5.charCodeAt(i2);
-    else if (isPathSeparator3(code))
-      break;
-    else
-      code = CHAR_FORWARD_SLASH2;
+    if (i2 < len) code = path5.charCodeAt(i2);
+    else if (isPathSeparator3(code)) break;
+    else code = CHAR_FORWARD_SLASH2;
     if (isPathSeparator3(code)) {
       if (lastSlash === i2 - 1 || dots === 1) {
       } else if (lastSlash !== i2 - 1 && dots === 2) {
@@ -20900,17 +20357,13 @@ function normalizeString2(path5, allowAboveRoot, separator, isPathSeparator3) {
           }
         }
         if (allowAboveRoot) {
-          if (res.length > 0)
-            res += `${separator}..`;
-          else
-            res = "..";
+          if (res.length > 0) res += `${separator}..`;
+          else res = "..";
           lastSegmentLength = 2;
         }
       } else {
-        if (res.length > 0)
-          res += separator + path5.slice(lastSlash + 1, i2);
-        else
-          res = path5.slice(lastSlash + 1, i2);
+        if (res.length > 0) res += separator + path5.slice(lastSlash + 1, i2);
+        else res = path5.slice(lastSlash + 1, i2);
         lastSegmentLength = i2 - lastSlash - 1;
       }
       lastSlash = i2;
@@ -20926,10 +20379,8 @@ function normalizeString2(path5, allowAboveRoot, separator, isPathSeparator3) {
 function _format2(sep7, pathObject) {
   const dir = pathObject.dir || pathObject.root;
   const base2 = pathObject.base || (pathObject.name || "") + (pathObject.ext || "");
-  if (!dir)
-    return base2;
-  if (dir === pathObject.root)
-    return dir + base2;
+  if (!dir) return base2;
+  if (dir === pathObject.root) return dir + base2;
   return dir + sep7 + base2;
 }
 var WHITESPACE_ENCODINGS2 = {
@@ -20974,8 +20425,7 @@ function resolve4(...pathSegments) {
     }
     assertPath2(path5);
     const len = path5.length;
-    if (len === 0)
-      continue;
+    if (len === 0) continue;
     let rootEnd = 0;
     let device = "";
     let isAbsolute7 = false;
@@ -20987,21 +20437,18 @@ function resolve4(...pathSegments) {
           let j2 = 2;
           let last = j2;
           for (; j2 < len; ++j2) {
-            if (isPathSeparator2(path5.charCodeAt(j2)))
-              break;
+            if (isPathSeparator2(path5.charCodeAt(j2))) break;
           }
           if (j2 < len && j2 !== last) {
             const firstPart = path5.slice(last, j2);
             last = j2;
             for (; j2 < len; ++j2) {
-              if (!isPathSeparator2(path5.charCodeAt(j2)))
-                break;
+              if (!isPathSeparator2(path5.charCodeAt(j2))) break;
             }
             if (j2 < len && j2 !== last) {
               last = j2;
               for (; j2 < len; ++j2) {
-                if (isPathSeparator2(path5.charCodeAt(j2)))
-                  break;
+                if (isPathSeparator2(path5.charCodeAt(j2))) break;
               }
               if (j2 === len) {
                 device = `\\\\${firstPart}\\${path5.slice(last)}`;
@@ -21041,8 +20488,7 @@ function resolve4(...pathSegments) {
       resolvedTail = `${path5.slice(rootEnd)}\\${resolvedTail}`;
       resolvedAbsolute = isAbsolute7;
     }
-    if (resolvedAbsolute && resolvedDevice.length > 0)
-      break;
+    if (resolvedAbsolute && resolvedDevice.length > 0) break;
   }
   resolvedTail = normalizeString2(
     resolvedTail,
@@ -21055,8 +20501,7 @@ function resolve4(...pathSegments) {
 function normalize5(path5) {
   assertPath2(path5);
   const len = path5.length;
-  if (len === 0)
-    return ".";
+  if (len === 0) return ".";
   let rootEnd = 0;
   let device;
   let isAbsolute7 = false;
@@ -21068,21 +20513,18 @@ function normalize5(path5) {
         let j2 = 2;
         let last = j2;
         for (; j2 < len; ++j2) {
-          if (isPathSeparator2(path5.charCodeAt(j2)))
-            break;
+          if (isPathSeparator2(path5.charCodeAt(j2))) break;
         }
         if (j2 < len && j2 !== last) {
           const firstPart = path5.slice(last, j2);
           last = j2;
           for (; j2 < len; ++j2) {
-            if (!isPathSeparator2(path5.charCodeAt(j2)))
-              break;
+            if (!isPathSeparator2(path5.charCodeAt(j2))) break;
           }
           if (j2 < len && j2 !== last) {
             last = j2;
             for (; j2 < len; ++j2) {
-              if (isPathSeparator2(path5.charCodeAt(j2)))
-                break;
+              if (isPathSeparator2(path5.charCodeAt(j2))) break;
             }
             if (j2 === len) {
               return `\\\\${firstPart}\\${path5.slice(last)}\\`;
@@ -21121,27 +20563,22 @@ function normalize5(path5) {
   } else {
     tail = "";
   }
-  if (tail.length === 0 && !isAbsolute7)
-    tail = ".";
+  if (tail.length === 0 && !isAbsolute7) tail = ".";
   if (tail.length > 0 && isPathSeparator2(path5.charCodeAt(len - 1))) {
     tail += "\\";
   }
   if (device === void 0) {
     if (isAbsolute7) {
-      if (tail.length > 0)
-        return `\\${tail}`;
-      else
-        return "\\";
+      if (tail.length > 0) return `\\${tail}`;
+      else return "\\";
     } else if (tail.length > 0) {
       return tail;
     } else {
       return "";
     }
   } else if (isAbsolute7) {
-    if (tail.length > 0)
-      return `${device}\\${tail}`;
-    else
-      return `${device}\\`;
+    if (tail.length > 0) return `${device}\\${tail}`;
+    else return `${device}\\`;
   } else if (tail.length > 0) {
     return device + tail;
   } else {
@@ -21151,37 +20588,31 @@ function normalize5(path5) {
 function isAbsolute4(path5) {
   assertPath2(path5);
   const len = path5.length;
-  if (len === 0)
-    return false;
+  if (len === 0) return false;
   const code = path5.charCodeAt(0);
   if (isPathSeparator2(code)) {
     return true;
   } else if (isWindowsDeviceRoot2(code)) {
     if (len > 2 && path5.charCodeAt(1) === CHAR_COLON3) {
-      if (isPathSeparator2(path5.charCodeAt(2)))
-        return true;
+      if (isPathSeparator2(path5.charCodeAt(2))) return true;
     }
   }
   return false;
 }
 function join6(...paths) {
   const pathsCount = paths.length;
-  if (pathsCount === 0)
-    return ".";
+  if (pathsCount === 0) return ".";
   let joined;
   let firstPart = null;
   for (let i2 = 0; i2 < pathsCount; ++i2) {
     const path5 = paths[i2];
     assertPath2(path5);
     if (path5.length > 0) {
-      if (joined === void 0)
-        joined = firstPart = path5;
-      else
-        joined += `\\${path5}`;
+      if (joined === void 0) joined = firstPart = path5;
+      else joined += `\\${path5}`;
     }
   }
-  if (joined === void 0)
-    return ".";
+  if (joined === void 0) return ".";
   let needsReplace = true;
   let slashCount = 0;
   assert2(firstPart != null);
@@ -21192,8 +20623,7 @@ function join6(...paths) {
       if (isPathSeparator2(firstPart.charCodeAt(1))) {
         ++slashCount;
         if (firstLen > 2) {
-          if (isPathSeparator2(firstPart.charCodeAt(2)))
-            ++slashCount;
+          if (isPathSeparator2(firstPart.charCodeAt(2))) ++slashCount;
           else {
             needsReplace = false;
           }
@@ -21203,47 +20633,38 @@ function join6(...paths) {
   }
   if (needsReplace) {
     for (; slashCount < joined.length; ++slashCount) {
-      if (!isPathSeparator2(joined.charCodeAt(slashCount)))
-        break;
+      if (!isPathSeparator2(joined.charCodeAt(slashCount))) break;
     }
-    if (slashCount >= 2)
-      joined = `\\${joined.slice(slashCount)}`;
+    if (slashCount >= 2) joined = `\\${joined.slice(slashCount)}`;
   }
   return normalize5(joined);
 }
 function relative4(from2, to) {
   assertPath2(from2);
   assertPath2(to);
-  if (from2 === to)
-    return "";
+  if (from2 === to) return "";
   const fromOrig = resolve4(from2);
   const toOrig = resolve4(to);
-  if (fromOrig === toOrig)
-    return "";
+  if (fromOrig === toOrig) return "";
   from2 = fromOrig.toLowerCase();
   to = toOrig.toLowerCase();
-  if (from2 === to)
-    return "";
+  if (from2 === to) return "";
   let fromStart = 0;
   let fromEnd = from2.length;
   for (; fromStart < fromEnd; ++fromStart) {
-    if (from2.charCodeAt(fromStart) !== CHAR_BACKWARD_SLASH2)
-      break;
+    if (from2.charCodeAt(fromStart) !== CHAR_BACKWARD_SLASH2) break;
   }
   for (; fromEnd - 1 > fromStart; --fromEnd) {
-    if (from2.charCodeAt(fromEnd - 1) !== CHAR_BACKWARD_SLASH2)
-      break;
+    if (from2.charCodeAt(fromEnd - 1) !== CHAR_BACKWARD_SLASH2) break;
   }
   const fromLen = fromEnd - fromStart;
   let toStart = 0;
   let toEnd = to.length;
   for (; toStart < toEnd; ++toStart) {
-    if (to.charCodeAt(toStart) !== CHAR_BACKWARD_SLASH2)
-      break;
+    if (to.charCodeAt(toStart) !== CHAR_BACKWARD_SLASH2) break;
   }
   for (; toEnd - 1 > toStart; --toEnd) {
-    if (to.charCodeAt(toEnd - 1) !== CHAR_BACKWARD_SLASH2)
-      break;
+    if (to.charCodeAt(toEnd - 1) !== CHAR_BACKWARD_SLASH2) break;
   }
   const toLen = toEnd - toStart;
   const length = fromLen < toLen ? fromLen : toLen;
@@ -21269,39 +20690,31 @@ function relative4(from2, to) {
     }
     const fromCode = from2.charCodeAt(fromStart + i2);
     const toCode = to.charCodeAt(toStart + i2);
-    if (fromCode !== toCode)
-      break;
-    else if (fromCode === CHAR_BACKWARD_SLASH2)
-      lastCommonSep = i2;
+    if (fromCode !== toCode) break;
+    else if (fromCode === CHAR_BACKWARD_SLASH2) lastCommonSep = i2;
   }
   if (i2 !== length && lastCommonSep === -1) {
     return toOrig;
   }
   let out2 = "";
-  if (lastCommonSep === -1)
-    lastCommonSep = 0;
+  if (lastCommonSep === -1) lastCommonSep = 0;
   for (i2 = fromStart + lastCommonSep + 1; i2 <= fromEnd; ++i2) {
     if (i2 === fromEnd || from2.charCodeAt(i2) === CHAR_BACKWARD_SLASH2) {
-      if (out2.length === 0)
-        out2 += "..";
-      else
-        out2 += "\\..";
+      if (out2.length === 0) out2 += "..";
+      else out2 += "\\..";
     }
   }
   if (out2.length > 0) {
     return out2 + toOrig.slice(toStart + lastCommonSep, toEnd);
   } else {
     toStart += lastCommonSep;
-    if (toOrig.charCodeAt(toStart) === CHAR_BACKWARD_SLASH2)
-      ++toStart;
+    if (toOrig.charCodeAt(toStart) === CHAR_BACKWARD_SLASH2) ++toStart;
     return toOrig.slice(toStart, toEnd);
   }
 }
 function toNamespacedPath4(path5) {
-  if (typeof path5 !== "string")
-    return path5;
-  if (path5.length === 0)
-    return "";
+  if (typeof path5 !== "string") return path5;
+  if (path5.length === 0) return "";
   const resolvedPath = resolve4(path5);
   if (resolvedPath.length >= 3) {
     if (resolvedPath.charCodeAt(0) === CHAR_BACKWARD_SLASH2) {
@@ -21322,8 +20735,7 @@ function toNamespacedPath4(path5) {
 function dirname4(path5) {
   assertPath2(path5);
   const len = path5.length;
-  if (len === 0)
-    return ".";
+  if (len === 0) return ".";
   let rootEnd = -1;
   let end = -1;
   let matchedSlash = true;
@@ -21336,20 +20748,17 @@ function dirname4(path5) {
         let j2 = 2;
         let last = j2;
         for (; j2 < len; ++j2) {
-          if (isPathSeparator2(path5.charCodeAt(j2)))
-            break;
+          if (isPathSeparator2(path5.charCodeAt(j2))) break;
         }
         if (j2 < len && j2 !== last) {
           last = j2;
           for (; j2 < len; ++j2) {
-            if (!isPathSeparator2(path5.charCodeAt(j2)))
-              break;
+            if (!isPathSeparator2(path5.charCodeAt(j2))) break;
           }
           if (j2 < len && j2 !== last) {
             last = j2;
             for (; j2 < len; ++j2) {
-              if (isPathSeparator2(path5.charCodeAt(j2)))
-                break;
+              if (isPathSeparator2(path5.charCodeAt(j2))) break;
             }
             if (j2 === len) {
               return path5;
@@ -21364,8 +20773,7 @@ function dirname4(path5) {
       if (path5.charCodeAt(1) === CHAR_COLON3) {
         rootEnd = offset = 2;
         if (len > 2) {
-          if (isPathSeparator2(path5.charCodeAt(2)))
-            rootEnd = offset = 3;
+          if (isPathSeparator2(path5.charCodeAt(2))) rootEnd = offset = 3;
         }
       }
     }
@@ -21383,10 +20791,8 @@ function dirname4(path5) {
     }
   }
   if (end === -1) {
-    if (rootEnd === -1)
-      return ".";
-    else
-      end = rootEnd;
+    if (rootEnd === -1) return ".";
+    else end = rootEnd;
   }
   return path5.slice(0, end);
 }
@@ -21402,13 +20808,11 @@ function basename4(path5, ext = "") {
   if (path5.length >= 2) {
     const drive = path5.charCodeAt(0);
     if (isWindowsDeviceRoot2(drive)) {
-      if (path5.charCodeAt(1) === CHAR_COLON3)
-        start2 = 2;
+      if (path5.charCodeAt(1) === CHAR_COLON3) start2 = 2;
     }
   }
   if (ext !== void 0 && ext.length > 0 && ext.length <= path5.length) {
-    if (ext.length === path5.length && ext === path5)
-      return "";
+    if (ext.length === path5.length && ext === path5) return "";
     let extIdx = ext.length - 1;
     let firstNonSlashEnd = -1;
     for (i2 = path5.length - 1; i2 >= start2; --i2) {
@@ -21435,10 +20839,8 @@ function basename4(path5, ext = "") {
         }
       }
     }
-    if (start2 === end)
-      end = firstNonSlashEnd;
-    else if (end === -1)
-      end = path5.length;
+    if (start2 === end) end = firstNonSlashEnd;
+    else if (end === -1) end = path5.length;
     return path5.slice(start2, end);
   } else {
     for (i2 = path5.length - 1; i2 >= start2; --i2) {
@@ -21452,8 +20854,7 @@ function basename4(path5, ext = "") {
         end = i2 + 1;
       }
     }
-    if (end === -1)
-      return "";
+    if (end === -1) return "";
     return path5.slice(start2, end);
   }
 }
@@ -21482,10 +20883,8 @@ function extname4(path5) {
       end = i2 + 1;
     }
     if (code === CHAR_DOT2) {
-      if (startDot === -1)
-        startDot = i2;
-      else if (preDotState !== 1)
-        preDotState = 1;
+      if (startDot === -1) startDot = i2;
+      else if (preDotState !== 1) preDotState = 1;
     } else if (startDot !== -1) {
       preDotState = -1;
     }
@@ -21507,8 +20906,7 @@ function parse6(path5) {
   assertPath2(path5);
   const ret = { root: "", dir: "", base: "", ext: "", name: "" };
   const len = path5.length;
-  if (len === 0)
-    return ret;
+  if (len === 0) return ret;
   let rootEnd = 0;
   let code = path5.charCodeAt(0);
   if (len > 1) {
@@ -21518,20 +20916,17 @@ function parse6(path5) {
         let j2 = 2;
         let last = j2;
         for (; j2 < len; ++j2) {
-          if (isPathSeparator2(path5.charCodeAt(j2)))
-            break;
+          if (isPathSeparator2(path5.charCodeAt(j2))) break;
         }
         if (j2 < len && j2 !== last) {
           last = j2;
           for (; j2 < len; ++j2) {
-            if (!isPathSeparator2(path5.charCodeAt(j2)))
-              break;
+            if (!isPathSeparator2(path5.charCodeAt(j2))) break;
           }
           if (j2 < len && j2 !== last) {
             last = j2;
             for (; j2 < len; ++j2) {
-              if (isPathSeparator2(path5.charCodeAt(j2)))
-                break;
+              if (isPathSeparator2(path5.charCodeAt(j2))) break;
             }
             if (j2 === len) {
               rootEnd = j2;
@@ -21562,8 +20957,7 @@ function parse6(path5) {
     ret.root = ret.dir = path5;
     return ret;
   }
-  if (rootEnd > 0)
-    ret.root = path5.slice(0, rootEnd);
+  if (rootEnd > 0) ret.root = path5.slice(0, rootEnd);
   let startDot = -1;
   let startPart = rootEnd;
   let end = -1;
@@ -21584,10 +20978,8 @@ function parse6(path5) {
       end = i2 + 1;
     }
     if (code === CHAR_DOT2) {
-      if (startDot === -1)
-        startDot = i2;
-      else if (preDotState !== 1)
-        preDotState = 1;
+      if (startDot === -1) startDot = i2;
+      else if (preDotState !== 1) preDotState = 1;
     } else if (startDot !== -1) {
       preDotState = -1;
     }
@@ -21605,8 +20997,7 @@ function parse6(path5) {
   }
   if (startPart > 0 && startPart !== rootEnd) {
     ret.dir = path5.slice(0, startPart - 1);
-  } else
-    ret.dir = ret.root;
+  } else ret.dir = ret.root;
   return ret;
 }
 function fromFileUrl4(url) {
@@ -21684,8 +21075,7 @@ function resolve5(...pathSegments) {
   let resolvedAbsolute = false;
   for (let i2 = pathSegments.length - 1; i2 >= -1 && !resolvedAbsolute; i2--) {
     let path5;
-    if (i2 >= 0)
-      path5 = pathSegments[i2];
+    if (i2 >= 0) path5 = pathSegments[i2];
     else {
       const { Deno: Deno3 } = globalThis;
       if (typeof Deno3?.cwd !== "function") {
@@ -21707,28 +21097,20 @@ function resolve5(...pathSegments) {
     isPosixPathSeparator2
   );
   if (resolvedAbsolute) {
-    if (resolvedPath.length > 0)
-      return `/${resolvedPath}`;
-    else
-      return "/";
-  } else if (resolvedPath.length > 0)
-    return resolvedPath;
-  else
-    return ".";
+    if (resolvedPath.length > 0) return `/${resolvedPath}`;
+    else return "/";
+  } else if (resolvedPath.length > 0) return resolvedPath;
+  else return ".";
 }
 function normalize6(path5) {
   assertPath2(path5);
-  if (path5.length === 0)
-    return ".";
+  if (path5.length === 0) return ".";
   const isAbsolute7 = path5.charCodeAt(0) === CHAR_FORWARD_SLASH2;
   const trailingSeparator = path5.charCodeAt(path5.length - 1) === CHAR_FORWARD_SLASH2;
   path5 = normalizeString2(path5, !isAbsolute7, "/", isPosixPathSeparator2);
-  if (path5.length === 0 && !isAbsolute7)
-    path5 = ".";
-  if (path5.length > 0 && trailingSeparator)
-    path5 += "/";
-  if (isAbsolute7)
-    return `/${path5}`;
+  if (path5.length === 0 && !isAbsolute7) path5 = ".";
+  if (path5.length > 0 && trailingSeparator) path5 += "/";
+  if (isAbsolute7) return `/${path5}`;
   return path5;
 }
 function isAbsolute5(path5) {
@@ -21736,44 +21118,36 @@ function isAbsolute5(path5) {
   return path5.length > 0 && path5.charCodeAt(0) === CHAR_FORWARD_SLASH2;
 }
 function join7(...paths) {
-  if (paths.length === 0)
-    return ".";
+  if (paths.length === 0) return ".";
   let joined;
   for (let i2 = 0, len = paths.length; i2 < len; ++i2) {
     const path5 = paths[i2];
     assertPath2(path5);
     if (path5.length > 0) {
-      if (!joined)
-        joined = path5;
-      else
-        joined += `/${path5}`;
+      if (!joined) joined = path5;
+      else joined += `/${path5}`;
     }
   }
-  if (!joined)
-    return ".";
+  if (!joined) return ".";
   return normalize6(joined);
 }
 function relative5(from2, to) {
   assertPath2(from2);
   assertPath2(to);
-  if (from2 === to)
-    return "";
+  if (from2 === to) return "";
   from2 = resolve5(from2);
   to = resolve5(to);
-  if (from2 === to)
-    return "";
+  if (from2 === to) return "";
   let fromStart = 1;
   const fromEnd = from2.length;
   for (; fromStart < fromEnd; ++fromStart) {
-    if (from2.charCodeAt(fromStart) !== CHAR_FORWARD_SLASH2)
-      break;
+    if (from2.charCodeAt(fromStart) !== CHAR_FORWARD_SLASH2) break;
   }
   const fromLen = fromEnd - fromStart;
   let toStart = 1;
   const toEnd = to.length;
   for (; toStart < toEnd; ++toStart) {
-    if (to.charCodeAt(toStart) !== CHAR_FORWARD_SLASH2)
-      break;
+    if (to.charCodeAt(toStart) !== CHAR_FORWARD_SLASH2) break;
   }
   const toLen = toEnd - toStart;
   const length = fromLen < toLen ? fromLen : toLen;
@@ -21798,26 +21172,20 @@ function relative5(from2, to) {
     }
     const fromCode = from2.charCodeAt(fromStart + i2);
     const toCode = to.charCodeAt(toStart + i2);
-    if (fromCode !== toCode)
-      break;
-    else if (fromCode === CHAR_FORWARD_SLASH2)
-      lastCommonSep = i2;
+    if (fromCode !== toCode) break;
+    else if (fromCode === CHAR_FORWARD_SLASH2) lastCommonSep = i2;
   }
   let out2 = "";
   for (i2 = fromStart + lastCommonSep + 1; i2 <= fromEnd; ++i2) {
     if (i2 === fromEnd || from2.charCodeAt(i2) === CHAR_FORWARD_SLASH2) {
-      if (out2.length === 0)
-        out2 += "..";
-      else
-        out2 += "/..";
+      if (out2.length === 0) out2 += "..";
+      else out2 += "/..";
     }
   }
-  if (out2.length > 0)
-    return out2 + to.slice(toStart + lastCommonSep);
+  if (out2.length > 0) return out2 + to.slice(toStart + lastCommonSep);
   else {
     toStart += lastCommonSep;
-    if (to.charCodeAt(toStart) === CHAR_FORWARD_SLASH2)
-      ++toStart;
+    if (to.charCodeAt(toStart) === CHAR_FORWARD_SLASH2) ++toStart;
     return to.slice(toStart);
   }
 }
@@ -21826,8 +21194,7 @@ function toNamespacedPath5(path5) {
 }
 function dirname5(path5) {
   assertPath2(path5);
-  if (path5.length === 0)
-    return ".";
+  if (path5.length === 0) return ".";
   const hasRoot = path5.charCodeAt(0) === CHAR_FORWARD_SLASH2;
   let end = -1;
   let matchedSlash = true;
@@ -21841,10 +21208,8 @@ function dirname5(path5) {
       matchedSlash = false;
     }
   }
-  if (end === -1)
-    return hasRoot ? "/" : ".";
-  if (hasRoot && end === 1)
-    return "//";
+  if (end === -1) return hasRoot ? "/" : ".";
+  if (hasRoot && end === 1) return "//";
   return path5.slice(0, end);
 }
 function basename5(path5, ext = "") {
@@ -21857,8 +21222,7 @@ function basename5(path5, ext = "") {
   let matchedSlash = true;
   let i2;
   if (ext !== void 0 && ext.length > 0 && ext.length <= path5.length) {
-    if (ext.length === path5.length && ext === path5)
-      return "";
+    if (ext.length === path5.length && ext === path5) return "";
     let extIdx = ext.length - 1;
     let firstNonSlashEnd = -1;
     for (i2 = path5.length - 1; i2 >= 0; --i2) {
@@ -21885,10 +21249,8 @@ function basename5(path5, ext = "") {
         }
       }
     }
-    if (start2 === end)
-      end = firstNonSlashEnd;
-    else if (end === -1)
-      end = path5.length;
+    if (start2 === end) end = firstNonSlashEnd;
+    else if (end === -1) end = path5.length;
     return path5.slice(start2, end);
   } else {
     for (i2 = path5.length - 1; i2 >= 0; --i2) {
@@ -21902,8 +21264,7 @@ function basename5(path5, ext = "") {
         end = i2 + 1;
       }
     }
-    if (end === -1)
-      return "";
+    if (end === -1) return "";
     return path5.slice(start2, end);
   }
 }
@@ -21928,10 +21289,8 @@ function extname5(path5) {
       end = i2 + 1;
     }
     if (code === CHAR_DOT2) {
-      if (startDot === -1)
-        startDot = i2;
-      else if (preDotState !== 1)
-        preDotState = 1;
+      if (startDot === -1) startDot = i2;
+      else if (preDotState !== 1) preDotState = 1;
     } else if (startDot !== -1) {
       preDotState = -1;
     }
@@ -21952,8 +21311,7 @@ function format6(pathObject) {
 function parse7(path5) {
   assertPath2(path5);
   const ret = { root: "", dir: "", base: "", ext: "", name: "" };
-  if (path5.length === 0)
-    return ret;
+  if (path5.length === 0) return ret;
   const isAbsolute7 = path5.charCodeAt(0) === CHAR_FORWARD_SLASH2;
   let start2;
   if (isAbsolute7) {
@@ -21982,10 +21340,8 @@ function parse7(path5) {
       end = i2 + 1;
     }
     if (code === CHAR_DOT2) {
-      if (startDot === -1)
-        startDot = i2;
-      else if (preDotState !== 1)
-        preDotState = 1;
+      if (startDot === -1) startDot = i2;
+      else if (preDotState !== 1) preDotState = 1;
     } else if (startDot !== -1) {
       preDotState = -1;
     }
@@ -22010,10 +21366,8 @@ function parse7(path5) {
     }
     ret.ext = path5.slice(startDot, end);
   }
-  if (startPart > 0)
-    ret.dir = path5.slice(0, startPart - 1);
-  else if (isAbsolute7)
-    ret.dir = "/";
+  if (startPart > 0) ret.dir = path5.slice(0, startPart - 1);
+  else if (isAbsolute7) ret.dir = "/";
   return ret;
 }
 function fromFileUrl5(url) {
@@ -22116,8 +21470,7 @@ function globToRegExp(glob, {
   const wildcard = os2 == "windows" ? "[^\\\\/]*" : "[^/]*";
   const escapePrefix = os2 == "windows" ? "`" : "\\";
   let newLength = glob.length;
-  for (; newLength > 1 && seps.includes(glob[newLength - 1]); newLength--)
-    ;
+  for (; newLength > 1 && seps.includes(glob[newLength - 1]); newLength--) ;
   glob = glob.slice(0, newLength);
   let regExpString = "";
   for (let j2 = 0; j2 < glob.length; ) {
@@ -22159,34 +21512,21 @@ function globToRegExp(glob, {
           }
           if (glob[k + 1] == ":" && glob[k + 2] == "]") {
             i2 = k + 2;
-            if (value == "alnum")
-              segment += "\\dA-Za-z";
-            else if (value == "alpha")
-              segment += "A-Za-z";
-            else if (value == "ascii")
-              segment += "\0-";
-            else if (value == "blank")
-              segment += "	 ";
-            else if (value == "cntrl")
-              segment += "\0-";
-            else if (value == "digit")
-              segment += "\\d";
-            else if (value == "graph")
-              segment += "!-~";
-            else if (value == "lower")
-              segment += "a-z";
-            else if (value == "print")
-              segment += " -~";
+            if (value == "alnum") segment += "\\dA-Za-z";
+            else if (value == "alpha") segment += "A-Za-z";
+            else if (value == "ascii") segment += "\0-";
+            else if (value == "blank") segment += "	 ";
+            else if (value == "cntrl") segment += "\0-";
+            else if (value == "digit") segment += "\\d";
+            else if (value == "graph") segment += "!-~";
+            else if (value == "lower") segment += "a-z";
+            else if (value == "print") segment += " -~";
             else if (value == "punct") {
               segment += `!"#$%&'()*+,\\-./:;<=>?@[\\\\\\]^_‘{|}~`;
-            } else if (value == "space")
-              segment += "\\s\v";
-            else if (value == "upper")
-              segment += "A-Z";
-            else if (value == "word")
-              segment += "\\w";
-            else if (value == "xdigit")
-              segment += "\\dA-Fa-f";
+            } else if (value == "space") segment += "\\s\v";
+            else if (value == "upper") segment += "A-Z";
+            else if (value == "word") segment += "\\w";
+            else if (value == "xdigit") segment += "\\dA-Fa-f";
             continue;
           }
         }
@@ -22296,8 +21636,7 @@ function globToRegExp(glob, {
       regExpString += i2 < glob.length ? sep7 : sepMaybe;
       endsWithSep = true;
     }
-    while (seps.includes(glob[i2]))
-      i2++;
+    while (seps.includes(glob[i2])) i2++;
     if (!(i2 > j2)) {
       throw new Error("Assertion failure: i > j (potential infinite loop)");
     }
@@ -22314,8 +21653,7 @@ function isGlob(str2) {
   }
   let match;
   while (match = regex2.exec(str2)) {
-    if (match[2])
-      return true;
+    if (match[2]) return true;
     let idx = match.index + match[0].length;
     const open2 = match[1];
     const close3 = open2 ? chars[open2] : null;
@@ -22347,20 +21685,16 @@ function joinGlobs(globs, { extended: extended2 = true, globstar = false } = {})
   if (!globstar || globs.length == 0) {
     return join8(...globs);
   }
-  if (globs.length === 0)
-    return ".";
+  if (globs.length === 0) return ".";
   let joined;
   for (const glob of globs) {
     const path5 = glob;
     if (path5.length > 0) {
-      if (!joined)
-        joined = path5;
-      else
-        joined += `${SEP2}${path5}`;
+      if (!joined) joined = path5;
+      else joined += `${SEP2}${path5}`;
     }
   }
-  if (!joined)
-    return ".";
+  if (!joined) return ".";
   return normalizeGlob(joined, { extended: extended2, globstar });
 }
 
@@ -23485,8 +22819,7 @@ var noEscapeAuth = new Int8Array([
   // 0x70 - 0x7F
 ]);
 function fileURLToPath(path5) {
-  if (typeof path5 === "string")
-    path5 = new URL(path5);
+  if (typeof path5 === "string") path5 = new URL(path5);
   else if (!(path5 instanceof URL)) {
     throw new ERR_INVALID_ARG_TYPE("path", ["string", "URL"], path5);
   }
@@ -23594,8 +22927,7 @@ function convertFileInfoToStats(origin) {
   };
 }
 function toBigInt(number) {
-  if (number === null || number === void 0)
-    return null;
+  if (number === null || number === void 0) return null;
   return BigInt(number);
 }
 function convertFileInfoToBigIntStats(origin) {
@@ -23633,15 +22965,13 @@ function convertFileInfoToBigIntStats(origin) {
   };
 }
 function CFISBIS(fileInfo, bigInt) {
-  if (bigInt)
-    return convertFileInfoToBigIntStats(fileInfo);
+  if (bigInt) return convertFileInfoToBigIntStats(fileInfo);
   return convertFileInfoToStats(fileInfo);
 }
 function stat(path5, optionsOrCallback, maybeCallback2) {
   const callback = typeof optionsOrCallback === "function" ? optionsOrCallback : maybeCallback2;
   const options = typeof optionsOrCallback === "object" ? optionsOrCallback : { bigint: false };
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   Deno.stat(path5).then(
     (stat2) => callback(null, CFISBIS(stat2, options.bigint)),
     (err2) => callback(denoErrorToNodeError(err2, { syscall: "stat" }))
@@ -23668,8 +22998,7 @@ function statSync(path5, options = { bigint: false, throwIfNoEntry: true }) {
 function lstat(path5, optionsOrCallback, maybeCallback2) {
   const callback = typeof optionsOrCallback === "function" ? optionsOrCallback : maybeCallback2;
   const options = typeof optionsOrCallback === "object" ? optionsOrCallback : { bigint: false };
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   Deno.lstat(path5).then(
     (stat2) => callback(null, CFISBIS(stat2, options.bigint)),
     (err2) => callback(err2)
@@ -24271,8 +23600,7 @@ function writeFile(pathOrRid, data, optOrCallback, callback) {
     } catch (e2) {
       error = e2 instanceof Error ? denoErrorToNodeError(e2, { syscall: "write" }) : new Error("[non-error thrown]");
     } finally {
-      if (!isRid && file)
-        file.close();
+      if (!isRid && file) file.close();
       callbackFn(error);
     }
   })();
@@ -24553,10 +23881,8 @@ function mkdir(path5, options, callback) {
   } else if (typeof options === "boolean") {
     recursive = options;
   } else if (options) {
-    if (options.recursive !== void 0)
-      recursive = options.recursive;
-    if (options.mode !== void 0)
-      mode = options.mode;
+    if (options.recursive !== void 0) recursive = options.recursive;
+    if (options.mode !== void 0) mode = options.mode;
   }
   validateBoolean(recursive, "options.recursive");
   Deno.mkdir(path5, { recursive, mode }).then(() => {
@@ -24583,22 +23909,18 @@ function mkdtemp(prefix, optionsOrCallback, maybeCallback2) {
     path5,
     { recursive: false, mode: 448 },
     (err2) => {
-      if (err2)
-        callback(err2);
-      else
-        callback(null, decode3(path5, encoding));
+      if (err2) callback(err2);
+      else callback(null, decode3(path5, encoding));
     }
   );
 }
 var mkdtempPromise = promisify(mkdtemp);
 function parseEncoding(optionsOrCallback) {
   let encoding;
-  if (typeof optionsOrCallback == "function")
-    encoding = void 0;
+  if (typeof optionsOrCallback == "function") encoding = void 0;
   else if (optionsOrCallback instanceof Object) {
     encoding = optionsOrCallback?.encoding;
-  } else
-    encoding = optionsOrCallback;
+  } else encoding = optionsOrCallback;
   if (encoding) {
     try {
       new TextDecoder(encoding);
@@ -24609,8 +23931,7 @@ function parseEncoding(optionsOrCallback) {
   return encoding;
 }
 function decode3(str2, encoding) {
-  if (!encoding)
-    return str2;
+  if (!encoding) return str2;
   else {
     const decoder2 = new TextDecoder(encoding);
     const encoder = new TextEncoder();
@@ -24650,10 +23971,8 @@ var FLAGS_AX_PLUS = O_APPEND | O_CREAT | O_RDWR | O_EXCL;
 var FLAGS_WX = O_TRUNC | O_CREAT | O_WRONLY | O_EXCL;
 var FLAGS_WX_PLUS = O_TRUNC | O_CREAT | O_RDWR | O_EXCL;
 function convertFlagAndModeToOptions(flag, mode) {
-  if (!flag && !mode)
-    return void 0;
-  if (!flag && mode)
-    return { mode };
+  if (!flag && !mode) return void 0;
+  if (!flag && mode) return { mode };
   return { ...getOpenOptions(flag), mode };
 }
 function open(path5, flags2, mode, callback) {
@@ -24804,8 +24123,7 @@ function read(fd, optOrBufferOrCb, offsetOrCallback, length, position, callback)
   }
   validatePosition(position);
   validateOffsetLengthRead(offset, length, buffer.byteLength);
-  if (!cb)
-    throw new ERR_INVALID_ARG_TYPE("cb", "Callback", cb);
+  if (!cb) throw new ERR_INVALID_ARG_TYPE("cb", "Callback", cb);
   (async () => {
     try {
       let nread;
@@ -24873,8 +24191,7 @@ function watch(filename, optionsOrListener, optionsOrListener2) {
       recursive: options?.recursive || false
     });
     asyncIterableToCallback(iterator, (val, done) => {
-      if (done)
-        return;
+      if (done) return;
       fsWatcher.emit(
         "change",
         convertDenoFsEventToNodeFsEvent(val.kind),
@@ -24999,8 +24316,7 @@ function readdir(path5, optionsOrCallback, maybeCallback2) {
   const options = typeof optionsOrCallback === "object" ? optionsOrCallback : null;
   const result = [];
   path5 = getValidatedPath(path5);
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   if (options?.encoding) {
     try {
       new TextDecoder(options.encoding);
@@ -25012,16 +24328,14 @@ function readdir(path5, optionsOrCallback, maybeCallback2) {
   }
   try {
     asyncIterableToCallback(Deno.readDir(path5.toString()), (val, done) => {
-      if (typeof path5 !== "string")
-        return;
+      if (typeof path5 !== "string") return;
       if (done) {
         callback(null, result);
         return;
       }
       if (options?.withFileTypes) {
         result.push(toDirent(val));
-      } else
-        result.push(decode4(val.name));
+      } else result.push(decode4(val.name));
     }, (e2) => {
       callback(denoErrorToNodeError(e2, { syscall: "readdir" }));
     });
@@ -25030,8 +24344,7 @@ function readdir(path5, optionsOrCallback, maybeCallback2) {
   }
 }
 function decode4(str2, encoding) {
-  if (!encoding)
-    return str2;
+  if (!encoding) return str2;
   else {
     const decoder2 = new TextDecoder(encoding);
     const encoder = new TextEncoder();
@@ -25043,8 +24356,7 @@ var readdirPromise = promisify(readdir);
 // https://deno.land/std@0.177.0/node/_fs/_fs_readFile.ts
 function maybeDecode(data, encoding) {
   const buffer = Buffer3.from(data.buffer, data.byteOffset, data.byteLength);
-  if (encoding && encoding !== "binary")
-    return buffer.toString(encoding);
+  if (encoding && encoding !== "binary") return buffer.toString(encoding);
   return buffer;
 }
 function readFile(path5, optOrCallback, callback) {
@@ -25146,8 +24458,7 @@ realpathSync.native = realpathSync;
 function rename(oldPath, newPath, callback) {
   oldPath = oldPath instanceof URL ? fromFileUrl6(oldPath) : oldPath;
   newPath = newPath instanceof URL ? fromFileUrl6(newPath) : newPath;
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   Deno.rename(oldPath, newPath).then((_2) => callback(), callback);
 }
 var renamePromise = promisify(rename);
@@ -25157,8 +24468,7 @@ function rmdir(path5, optionsOrCallback, maybeCallback2) {
   path5 = toNamespacedPath6(getValidatedPath(path5));
   const callback = typeof optionsOrCallback === "function" ? optionsOrCallback : maybeCallback2;
   const options = typeof optionsOrCallback === "object" ? optionsOrCallback : void 0;
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   if (options?.recursive) {
     emitRecursiveRmdirWarning();
     validateRmOptions(
@@ -25190,8 +24500,7 @@ var rmdirPromise = promisify(rmdir);
 function rm(path5, optionsOrCallback, maybeCallback2) {
   const callback = typeof optionsOrCallback === "function" ? optionsOrCallback : maybeCallback2;
   const options = typeof optionsOrCallback === "object" ? optionsOrCallback : void 0;
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   validateRmOptions(
     path5,
     options,
@@ -25220,8 +24529,7 @@ function symlink(target, path5, typeOrCallback, maybeCallback2) {
   path5 = path5 instanceof URL ? fromFileUrl6(path5) : path5;
   const type = typeof typeOrCallback === "string" ? typeOrCallback : "file";
   const callback = typeof typeOrCallback === "function" ? typeOrCallback : maybeCallback2;
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   Deno.symlink(target, path5, { type }).then(() => callback(null), callback);
 }
 var symlinkPromise = promisify(symlink);
@@ -25231,16 +24539,14 @@ function truncate(path5, lenOrCallback, maybeCallback2) {
   path5 = path5 instanceof URL ? fromFileUrl6(path5) : path5;
   const len = typeof lenOrCallback === "number" ? lenOrCallback : void 0;
   const callback = typeof lenOrCallback === "function" ? lenOrCallback : maybeCallback2;
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   Deno.truncate(path5, len).then(() => callback(null), callback);
 }
 var truncatePromise = promisify(truncate);
 
 // https://deno.land/std@0.177.0/node/_fs/_fs_unlink.ts
 function unlink(path5, callback) {
-  if (!callback)
-    throw new Error("No callback function supplied");
+  if (!callback) throw new Error("No callback function supplied");
   Deno.remove(path5).then((_2) => callback(), callback);
 }
 var unlinkPromise = promisify(unlink);
@@ -25364,8 +24670,7 @@ function writev(fd, buffers, position, callback) {
     process.nextTick(callback, null, 0, buffers);
     return;
   }
-  if (typeof position !== "number")
-    position = null;
+  if (typeof position !== "number") position = null;
   innerWritev(fd, buffers, position).then(
     (nwritten) => {
       callback(null, nwritten, buffers);
@@ -25561,8 +24866,7 @@ ReadStream.prototype._destroy = function(err2, cb) {
   }
 };
 ReadStream.prototype.close = function(cb) {
-  if (typeof cb === "function")
-    Du(this, cb);
+  if (typeof cb === "function") Du(this, cb);
   this.destroy();
 };
 Object.defineProperty(ReadStream.prototype, "pending", {
@@ -25796,9 +25100,7 @@ var __ATPOSTRUN__ = [];
 var __RELOC_FUNCS__ = [];
 var runtimeInitialized = false;
 function preRun() {
-  if (Module.preRun)
-    for (typeof Module.preRun == "function" && (Module.preRun = [Module.preRun]); Module.preRun.length; )
-      addOnPreRun(Module.preRun.shift());
+  if (Module.preRun) for (typeof Module.preRun == "function" && (Module.preRun = [Module.preRun]); Module.preRun.length; ) addOnPreRun(Module.preRun.shift());
   callRuntimeCallbacks(__ATPRERUN__);
 }
 function initRuntime() {
@@ -25809,9 +25111,7 @@ function preMain() {
   callRuntimeCallbacks(__ATMAIN__);
 }
 function postRun() {
-  if (Module.postRun)
-    for (typeof Module.postRun == "function" && (Module.postRun = [Module.postRun]); Module.postRun.length; )
-      addOnPostRun(Module.postRun.shift());
+  if (Module.postRun) for (typeof Module.postRun == "function" && (Module.postRun = [Module.postRun]); Module.postRun.length; ) addOnPostRun(Module.postRun.shift());
   callRuntimeCallbacks(__ATPOSTRUN__);
 }
 function addOnPreRun(e2) {
@@ -25846,18 +25146,15 @@ var isDataURI = (e2) => e2.startsWith(dataURIPrefix);
 var isFileURI = (e2) => e2.startsWith("file://");
 var wasmBinaryFile;
 function getBinarySync(e2) {
-  if (e2 == wasmBinaryFile && wasmBinary)
-    return new Uint8Array(wasmBinary);
-  if (readBinary)
-    return readBinary(e2);
+  if (e2 == wasmBinaryFile && wasmBinary) return new Uint8Array(wasmBinary);
+  if (readBinary) return readBinary(e2);
   throw "both async and sync fetching of the wasm failed";
 }
 function getBinaryPromise(e2) {
   if (!wasmBinary && (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER)) {
     if (typeof fetch == "function" && !isFileURI(e2))
       return fetch(e2, { credentials: "same-origin" }).then((t) => {
-        if (!t.ok)
-          throw `failed to load wasm binary file at '${e2}'`;
+        if (!t.ok) throw `failed to load wasm binary file at '${e2}'`;
         return t.arrayBuffer();
       }).catch(() => getBinarySync(e2));
     if (readAsync)
@@ -25912,31 +25209,25 @@ var GOTHandler = {
   }
 };
 var callRuntimeCallbacks = (e2) => {
-  for (; e2.length > 0; )
-    e2.shift()(Module);
+  for (; e2.length > 0; ) e2.shift()(Module);
 };
 var UTF8Decoder = typeof TextDecoder < "u" ? new TextDecoder("utf8") : void 0;
 var UTF8ArrayToString = (e2, t, _2) => {
-  for (var s2 = t + _2, r2 = t; e2[r2] && !(r2 >= s2); )
-    ++r2;
-  if (r2 - t > 16 && e2.buffer && UTF8Decoder)
-    return UTF8Decoder.decode(e2.subarray(t, r2));
+  for (var s2 = t + _2, r2 = t; e2[r2] && !(r2 >= s2); ) ++r2;
+  if (r2 - t > 16 && e2.buffer && UTF8Decoder) return UTF8Decoder.decode(e2.subarray(t, r2));
   for (var a2 = ""; t < r2; ) {
     var o2 = e2[t++];
     if (128 & o2) {
       var n2 = 63 & e2[t++];
       if ((224 & o2) != 192) {
         var u = 63 & e2[t++];
-        if ((o2 = (240 & o2) == 224 ? (15 & o2) << 12 | n2 << 6 | u : (7 & o2) << 18 | n2 << 12 | u << 6 | 63 & e2[t++]) < 65536)
-          a2 += String.fromCharCode(o2);
+        if ((o2 = (240 & o2) == 224 ? (15 & o2) << 12 | n2 << 6 | u : (7 & o2) << 18 | n2 << 12 | u << 6 | 63 & e2[t++]) < 65536) a2 += String.fromCharCode(o2);
         else {
           var m2 = o2 - 65536;
           a2 += String.fromCharCode(55296 | m2 >> 10, 56320 | 1023 & m2);
         }
-      } else
-        a2 += String.fromCharCode((31 & o2) << 6 | n2);
-    } else
-      a2 += String.fromCharCode(o2);
+      } else a2 += String.fromCharCode((31 & o2) << 6 | n2);
+    } else a2 += String.fromCharCode(o2);
   }
   return a2;
 };
@@ -25945,8 +25236,7 @@ var getDylinkMetadata = (e2) => {
   function s2() {
     for (var h = 0, l = 1; ; ) {
       var g2 = e2[t++];
-      if (h += (127 & g2) * l, l *= 128, !(128 & g2))
-        break;
+      if (h += (127 & g2) * l, l *= 128, !(128 & g2)) break;
     }
     return h;
   }
@@ -25955,8 +25245,7 @@ var getDylinkMetadata = (e2) => {
     return UTF8ArrayToString(e2, (t += h) - h, h);
   }
   function a2(h, l) {
-    if (h)
-      throw new Error(l);
+    if (h) throw new Error(l);
   }
   var o2 = "dylink.0";
   if (e2 instanceof WebAssembly.Module) {
@@ -25978,21 +25267,15 @@ var getDylinkMetadata = (e2) => {
   } else
     for (a2(o2 !== "dylink.0"); t < _2; ) {
       var p = e2[t++], I = s2();
-      if (p === 1)
-        m2.memorySize = s2(), m2.memoryAlign = s2(), m2.tableSize = s2(), m2.tableAlign = s2();
-      else if (p === 2)
-        for (w = s2(), c = 0; c < w; ++c)
-          f = r2(), m2.neededDynlibs.push(f);
+      if (p === 1) m2.memorySize = s2(), m2.memoryAlign = s2(), m2.tableSize = s2(), m2.tableAlign = s2();
+      else if (p === 2) for (w = s2(), c = 0; c < w; ++c) f = r2(), m2.neededDynlibs.push(f);
       else if (p === 3)
         for (var d = s2(); d--; ) {
           var b = r2();
           256 & s2() && m2.tlsExports.add(b);
         }
-      else if (p === 4)
-        for (d = s2(); d--; )
-          r2(), b = r2(), (3 & s2()) == 1 && m2.weakImports.add(b);
-      else
-        t += I;
+      else if (p === 4) for (d = s2(); d--; ) r2(), b = r2(), (3 & s2()) == 1 && m2.weakImports.add(b);
+      else t += I;
     }
   return m2;
 };
@@ -26032,8 +25315,7 @@ var ___heap_base = 78096;
 var zeroMemory = (e2, t) => (HEAPU8.fill(0, e2, e2 + t), e2);
 var alignMemory = (e2, t) => Math.ceil(e2 / t) * t;
 var getMemory = (e2) => {
-  if (runtimeInitialized)
-    return zeroMemory(_malloc(e2), e2);
+  if (runtimeInitialized) return zeroMemory(_malloc(e2), e2);
   var t = ___heap_base, _2 = t + alignMemory(e2, 16);
   !GOT.__heap_base && GOTHandler.get(wasmImports, "__heap_base");
   return ___heap_base = _2, GOT.__heap_base.value = _2, t;
@@ -26043,20 +25325,17 @@ var uleb128Encode = (e2, t) => {
   e2 < 128 ? t.push(e2) : t.push(e2 % 128 | 128, e2 >> 7);
 };
 var sigToWasmTypes = (e2) => {
-  for (var t = { i: "i32", j: "i64", f: "f32", d: "f64", e: "externref", p: "i32" }, _2 = { parameters: [], results: e2[0] == "v" ? [] : [t[e2[0]]] }, s2 = 1; s2 < e2.length; ++s2)
-    _2.parameters.push(t[e2[s2]]);
+  for (var t = { i: "i32", j: "i64", f: "f32", d: "f64", e: "externref", p: "i32" }, _2 = { parameters: [], results: e2[0] == "v" ? [] : [t[e2[0]]] }, s2 = 1; s2 < e2.length; ++s2) _2.parameters.push(t[e2[s2]]);
   return _2;
 };
 var generateFuncType = (e2, t) => {
   var _2 = e2.slice(0, 1), s2 = e2.slice(1), r2 = { i: 127, p: 127, j: 126, f: 125, d: 124, e: 111 };
   t.push(96), uleb128Encode(s2.length, t);
-  for (var a2 = 0; a2 < s2.length; ++a2)
-    t.push(r2[s2[a2]]);
+  for (var a2 = 0; a2 < s2.length; ++a2) t.push(r2[s2[a2]]);
   _2 == "v" ? t.push(0) : t.push(1, r2[_2]);
 };
 var convertJsFunctionToWasm = (e2, t) => {
-  if (typeof WebAssembly.Function == "function")
-    return new WebAssembly.Function(sigToWasmTypes(t), e2);
+  if (typeof WebAssembly.Function == "function") return new WebAssembly.Function(sigToWasmTypes(t), e2);
   var _2 = [1];
   generateFuncType(t, _2);
   var s2 = [0, 97, 115, 109, 1, 0, 0, 0, 1];
@@ -26081,8 +25360,7 @@ var functionsInTableMap;
 var getFunctionAddress = (e2) => (functionsInTableMap || (functionsInTableMap = /* @__PURE__ */ new WeakMap(), updateTableMap(0, wasmTable.length)), functionsInTableMap.get(e2) || 0);
 var freeTableIndexes = [];
 var getEmptyTableSlot = () => {
-  if (freeTableIndexes.length)
-    return freeTableIndexes.pop();
+  if (freeTableIndexes.length) return freeTableIndexes.pop();
   try {
     wasmTable.grow(1);
   } catch (e2) {
@@ -26095,14 +25373,12 @@ var setWasmTableEntry = (e2, t) => {
 };
 var addFunction = (e2, t) => {
   var _2 = getFunctionAddress(e2);
-  if (_2)
-    return _2;
+  if (_2) return _2;
   var s2 = getEmptyTableSlot();
   try {
     setWasmTableEntry(s2, e2);
   } catch (a2) {
-    if (!(a2 instanceof TypeError))
-      throw a2;
+    if (!(a2 instanceof TypeError)) throw a2;
     var r2 = convertJsFunctionToWasm(e2, t);
     setWasmTableEntry(s2, r2);
   }
@@ -26134,8 +25410,7 @@ var createInvokeFunction = (e2) => function() {
   try {
     return dynCall(e2, arguments[0], Array.prototype.slice.call(arguments, 1));
   } catch (_2) {
-    if (stackRestore(t), _2 !== _2 + 0)
-      throw _2;
+    if (stackRestore(t), _2 !== _2 + 0) throw _2;
     _setThrew(1, 0);
   }
 };
@@ -26151,8 +25426,7 @@ var loadWebAssemblyModule = (binary, flags, libName, localScope, handle) => {
     if (firstLoad) {
       var memAlign = Math.pow(2, metadata.memoryAlign), memoryBase = metadata.memorySize ? alignMemory(getMemory(metadata.memorySize + memAlign), memAlign) : 0, tableBase = metadata.tableSize ? wasmTable.length : 0;
       handle && (HEAP8[handle + 8] = 1, HEAPU32[handle + 12 >> 2] = memoryBase, HEAP32[handle + 16 >> 2] = metadata.memorySize, HEAPU32[handle + 20 >> 2] = tableBase, HEAP32[handle + 24 >> 2] = metadata.tableSize);
-    } else
-      memoryBase = HEAPU32[handle + 12 >> 2], tableBase = HEAPU32[handle + 20 >> 2];
+    } else memoryBase = HEAPU32[handle + 12 >> 2], tableBase = HEAPU32[handle + 20 >> 2];
     var tableGrowthNeeded = tableBase + metadata.tableSize - wasmTable.length, moduleExports;
     function resolveSymbol(e2) {
       var t = resolveGlobalSymbol(e2).sym;
@@ -26167,8 +25441,7 @@ var loadWebAssemblyModule = (binary, flags, libName, localScope, handle) => {
           case "__table_base":
             return tableBase;
         }
-        if (t in wasmImports && !wasmImports[t].stub)
-          return wasmImports[t];
+        if (t in wasmImports && !wasmImports[t].stub) return wasmImports[t];
         var _2;
         return t in e2 || (e2[t] = (...s2) => {
           _2 ||= resolveSymbol(t);
@@ -26188,8 +25461,7 @@ This is effectively a dynamic linking (dyld) error from compiling the C code tha
     }, proxy = new Proxy({}, proxyHandler), info = { "GOT.mem": new Proxy({}, GOTHandler), "GOT.func": new Proxy({}, GOTHandler), env: proxy, wasi_snapshot_preview1: proxy };
     function postInstantiation(module, instance) {
       function addEmAsm(addr, body) {
-        for (var args = [], arity = 0; arity < 16 && body.indexOf("$" + arity) != -1; arity++)
-          args.push("$" + arity);
+        for (var args = [], arity = 0; arity < 16 && body.indexOf("$" + arity) != -1; arity++) args.push("$" + arity);
         args = args.join(",");
         var func = `(${args}) => { ${body} };`;
         ASM_CONSTS[start] = eval(func);
@@ -26249,16 +25521,14 @@ var asyncLoad = (e2, t, _2, s2) => {
       t(new Uint8Array(a2)), r2 && removeRunDependency(r2);
     },
     (a2) => {
-      if (!_2)
-        throw `Loading data file "${e2}" failed.`;
+      if (!_2) throw `Loading data file "${e2}" failed.`;
       _2();
     }
   ), r2 && addRunDependency(r2);
 };
 function loadDynamicLibrary(e2, t = { global: true, nodelete: true }, _2, s2) {
   var r2 = LDSO.loadedLibsByName[e2];
-  if (r2)
-    return t.global ? r2.global || (r2.global = true, mergeLibSymbols(r2.exports, e2)) : _2 && Object.assign(_2, r2.exports), t.nodelete && r2.refcount !== 1 / 0 && (r2.refcount = 1 / 0), r2.refcount++, s2 && (LDSO.loadedLibsByHandle[s2] = r2), !t.loadAsync || Promise.resolve(true);
+  if (r2) return t.global ? r2.global || (r2.global = true, mergeLibSymbols(r2.exports, e2)) : _2 && Object.assign(_2, r2.exports), t.nodelete && r2.refcount !== 1 / 0 && (r2.refcount = 1 / 0), r2.refcount++, s2 && (LDSO.loadedLibsByHandle[s2] = r2), !t.loadAsync || Promise.resolve(true);
   function a2() {
     if (s2) {
       var u = HEAPU32[s2 + 28 >> 2], m2 = HEAPU32[s2 + 32 >> 2];
@@ -26272,8 +25542,7 @@ function loadDynamicLibrary(e2, t = { global: true, nodelete: true }, _2, s2) {
       return new Promise(function(f, p) {
         asyncLoad(c, f, p);
       });
-    if (!readBinary)
-      throw new Error(`${c}: file not found, and synchronous loading of external files is not available`);
+    if (!readBinary) throw new Error(`${c}: file not found, and synchronous loading of external files is not available`);
     return readBinary(c);
   }
   function o2() {
@@ -26288,13 +25557,10 @@ var reportUndefinedSymbols = () => {
   for (var [e2, t] of Object.entries(GOT))
     if (t.value == 0) {
       var _2 = resolveGlobalSymbol(e2, true).sym;
-      if (!_2 && !t.required)
-        continue;
-      if (typeof _2 == "function")
-        t.value = addFunction(_2, _2.sig);
+      if (!_2 && !t.required) continue;
+      if (typeof _2 == "function") t.value = addFunction(_2, _2.sig);
       else {
-        if (typeof _2 != "number")
-          throw new Error(`bad export type for '${e2}': ${typeof _2}`);
+        if (typeof _2 != "number") throw new Error(`bad export type for '${e2}': ${typeof _2}`);
         t.value = _2;
       }
     }
@@ -26359,14 +25625,12 @@ var _emscripten_resize_heap = (e2) => {
   var t = HEAPU8.length;
   e2 >>>= 0;
   var _2 = getHeapMax();
-  if (e2 > _2)
-    return false;
+  if (e2 > _2) return false;
   for (var s2, r2, a2 = 1; a2 <= 4; a2 *= 2) {
     var o2 = t * (1 + 0.2 / a2);
     o2 = Math.min(o2, e2 + 100663296);
     var n2 = Math.min(_2, (s2 = Math.max(e2, o2)) + ((r2 = 65536) - s2 % r2) % r2);
-    if (growMemory(n2))
-      return true;
+    if (growMemory(n2)) return true;
   }
   return false;
 };
@@ -26396,8 +25660,7 @@ var _fd_write = (e2, t, _2, s2) => {
   for (var r2 = 0, a2 = 0; a2 < _2; a2++) {
     var o2 = HEAPU32[t >> 2], n2 = HEAPU32[t + 4 >> 2];
     t += 8;
-    for (var u = 0; u < n2; u++)
-      printChar(e2, HEAPU8[o2 + u]);
+    for (var u = 0; u < n2; u++) printChar(e2, HEAPU8[o2 + u]);
     r2 += n2;
   }
   return HEAPU32[s2 >> 2] = r2, 0;
@@ -26425,8 +25688,7 @@ var exitJS = (e2, t) => {
   EXITSTATUS = e2, _proc_exit(e2);
 };
 var handleException = (e2) => {
-  if (e2 instanceof ExitStatus || e2 == "unwind")
-    return EXITSTATUS;
+  if (e2 instanceof ExitStatus || e2 == "unwind") return EXITSTATUS;
   quit_(1, e2);
 };
 var lengthBytesUTF8 = (e2) => {
@@ -26437,25 +25699,20 @@ var lengthBytesUTF8 = (e2) => {
   return t;
 };
 var stringToUTF8Array = (e2, t, _2, s2) => {
-  if (!(s2 > 0))
-    return 0;
+  if (!(s2 > 0)) return 0;
   for (var r2 = _2, a2 = _2 + s2 - 1, o2 = 0; o2 < e2.length; ++o2) {
     var n2 = e2.charCodeAt(o2);
     if (n2 >= 55296 && n2 <= 57343 && (n2 = 65536 + ((1023 & n2) << 10) | 1023 & e2.charCodeAt(++o2)), n2 <= 127) {
-      if (_2 >= a2)
-        break;
+      if (_2 >= a2) break;
       t[_2++] = n2;
     } else if (n2 <= 2047) {
-      if (_2 + 1 >= a2)
-        break;
+      if (_2 + 1 >= a2) break;
       t[_2++] = 192 | n2 >> 6, t[_2++] = 128 | 63 & n2;
     } else if (n2 <= 65535) {
-      if (_2 + 2 >= a2)
-        break;
+      if (_2 + 2 >= a2) break;
       t[_2++] = 224 | n2 >> 12, t[_2++] = 128 | n2 >> 6 & 63, t[_2++] = 128 | 63 & n2;
     } else {
-      if (_2 + 3 >= a2)
-        break;
+      if (_2 + 3 >= a2) break;
       t[_2++] = 240 | n2 >> 18, t[_2++] = 128 | n2 >> 12 & 63, t[_2++] = 128 | n2 >> 6 & 63, t[_2++] = 128 | 63 & n2;
     }
   }
@@ -26467,8 +25724,7 @@ var stringToUTF8OnStack = (e2) => {
   return stringToUTF8(e2, _2, t), _2;
 };
 var stringToUTF16 = (e2, t, _2) => {
-  if (_2 ??= 2147483647, _2 < 2)
-    return 0;
+  if (_2 ??= 2147483647, _2 < 2) return 0;
   for (var s2 = t, r2 = (_2 -= 2) < 2 * e2.length ? _2 / 2 : e2.length, a2 = 0; a2 < r2; ++a2) {
     var o2 = e2.charCodeAt(a2);
     HEAP16[t >> 1] = o2, t += 2;
@@ -26478,8 +25734,7 @@ var stringToUTF16 = (e2, t, _2) => {
 var AsciiToString = (e2) => {
   for (var t = ""; ; ) {
     var _2 = HEAPU8[e2++];
-    if (!_2)
-      return t;
+    if (!_2) return t;
     t += String.fromCharCode(_2);
   }
 };
@@ -26657,8 +25912,7 @@ function run(e2 = arguments_) {
 if (Module.AsciiToString = AsciiToString, Module.stringToUTF16 = stringToUTF16, dependenciesFulfilled = function e() {
   calledRun || run(), calledRun || (dependenciesFulfilled = e);
 }, Module.preInit)
-  for (typeof Module.preInit == "function" && (Module.preInit = [Module.preInit]); Module.preInit.length > 0; )
-    Module.preInit.pop()();
+  for (typeof Module.preInit == "function" && (Module.preInit = [Module.preInit]); Module.preInit.length > 0; ) Module.preInit.pop()();
 var shouldRunNow = true;
 Module.noInitialRun && (shouldRunNow = false), run();
 var C = Module;
@@ -26700,16 +25954,13 @@ var Parser = class {
   setLanguage(t) {
     let _2;
     if (t) {
-      if (t.constructor !== Language)
-        throw new Error("Argument must be a Language");
+      if (t.constructor !== Language) throw new Error("Argument must be a Language");
       {
         _2 = t[0];
         let s2 = C._ts_language_version(_2);
-        if (s2 < MIN_COMPATIBLE_VERSION || VERSION < s2)
-          throw new Error(`Incompatible language version ${s2}. Compatibility range ${MIN_COMPATIBLE_VERSION} through ${VERSION}.`);
+        if (s2 < MIN_COMPATIBLE_VERSION || VERSION < s2) throw new Error(`Incompatible language version ${s2}. Compatibility range ${MIN_COMPATIBLE_VERSION} through ${VERSION}.`);
       }
-    } else
-      _2 = 0, t = null;
+    } else _2 = 0, t = null;
     return this.language = t, C._ts_parser_set_language(this[0], _2), this;
   }
   getLanguage() {
@@ -26720,8 +25971,7 @@ var Parser = class {
     if (typeof inputString == "string") {
       currentParseCallback = (u, m2) => inputString.slice(u);
     } else {
-      if (typeof inputString != "function")
-        throw new Error("Argument must be a string or a function");
+      if (typeof inputString != "function") throw new Error("Argument must be a string or a function");
       currentParseCallback = inputString;
     }
     this.logCallback ? (currentLogCallback = this.logCallback, C._ts_parser_enable_logger_wasm(this[0], 1)) : (currentLogCallback = null, C._ts_parser_enable_logger_wasm(this[0], 0));
@@ -26730,12 +25980,10 @@ var Parser = class {
       ;
       r2 = options.includedRanges.length, a2 = C._calloc(r2, SIZE_OF_RANGE);
       let u = a2;
-      for (let m2 = 0; m2 < r2; m2++)
-        marshalRange(u, options.includedRanges[m2]), u += SIZE_OF_RANGE;
+      for (let m2 = 0; m2 < r2; m2++) marshalRange(u, options.includedRanges[m2]), u += SIZE_OF_RANGE;
     }
     let o2 = C._ts_parser_parse_wasm(this[0], this[1], previousTree ? previousTree[0] : 0, a2, r2);
-    if (!o2)
-      throw currentParseCallback = null, currentLogCallback = null, new Error("Parsing failed");
+    if (!o2) throw currentParseCallback = null, currentLogCallback = null, new Error("Parsing failed");
     let n2 = new Tree(INTERNAL, o2, this.language, currentParseCallback);
     n2.parse = (newString, newOptions) => this.parse(newString, n2, newOptions || options);
     Object.defineProperty(n2, "string", {
@@ -26754,8 +26002,7 @@ var Parser = class {
     let t = getValue(TRANSFER_BUFFER, "i32"), _2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32"), s2 = new Array(t);
     if (t > 0) {
       let r2 = _2;
-      for (let a2 = 0; a2 < t; a2++)
-        s2[a2] = unmarshalRange(r2), r2 += SIZE_OF_RANGE;
+      for (let a2 = 0; a2 < t; a2++) s2[a2] = unmarshalRange(r2), r2 += SIZE_OF_RANGE;
       C._free(_2);
     }
     return s2;
@@ -26768,10 +26015,8 @@ var Parser = class {
   }
   setLogger(t) {
     if (t) {
-      if (typeof t != "function")
-        throw new Error("Logger callback must be a function");
-    } else
-      t = null;
+      if (typeof t != "function") throw new Error("Logger callback must be a function");
+    } else t = null;
     return this.logCallback = t, this;
   }
   getLogger() {
@@ -26806,14 +26051,12 @@ var Tree = class _Tree {
     return this.rootNode.walk();
   }
   getChangedRanges(t) {
-    if (t.constructor !== _Tree)
-      throw new TypeError("Argument must be a Tree");
+    if (t.constructor !== _Tree) throw new TypeError("Argument must be a Tree");
     C._ts_tree_get_changed_ranges_wasm(this[0], t[0]);
     let _2 = getValue(TRANSFER_BUFFER, "i32"), s2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32"), r2 = new Array(_2);
     if (_2 > 0) {
       let a2 = s2;
-      for (let o2 = 0; o2 < _2; o2++)
-        r2[o2] = unmarshalRange(a2), a2 += SIZE_OF_RANGE;
+      for (let o2 = 0; o2 < _2; o2++) r2[o2] = unmarshalRange(a2), a2 += SIZE_OF_RANGE;
       C._free(s2);
     }
     return r2;
@@ -26823,8 +26066,7 @@ var Tree = class _Tree {
     let t = getValue(TRANSFER_BUFFER, "i32"), _2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32"), s2 = new Array(t);
     if (t > 0) {
       let r2 = _2;
-      for (let a2 = 0; a2 < t; a2++)
-        s2[a2] = unmarshalRange(r2), r2 += SIZE_OF_RANGE;
+      for (let a2 = 0; a2 < t; a2++) s2[a2] = unmarshalRange(r2), r2 += SIZE_OF_RANGE;
       C._free(_2);
     }
     return s2;
@@ -26909,8 +26151,7 @@ var Node = class _Node {
     let _2 = getValue(TRANSFER_BUFFER, "i32"), s2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32"), r2 = new Array(_2);
     if (_2 > 0) {
       let a2 = s2;
-      for (let o2 = 0; o2 < _2; o2++)
-        r2[o2] = unmarshalNode(this.tree, a2), a2 += SIZE_OF_NODE;
+      for (let o2 = 0; o2 < _2; o2++) r2[o2] = unmarshalNode(this.tree, a2), a2 += SIZE_OF_NODE;
       C._free(s2);
     }
     return r2;
@@ -26945,8 +26186,7 @@ var Node = class _Node {
       let t = getValue(TRANSFER_BUFFER, "i32"), _2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32");
       if (this._children = new Array(t), t > 0) {
         let s2 = _2;
-        for (let r2 = 0; r2 < t; r2++)
-          this._children[r2] = unmarshalNode(this.tree, s2), s2 += SIZE_OF_NODE;
+        for (let r2 = 0; r2 < t; r2++) this._children[r2] = unmarshalNode(this.tree, s2), s2 += SIZE_OF_NODE;
         C._free(_2);
       }
     }
@@ -26958,8 +26198,7 @@ var Node = class _Node {
       let t = getValue(TRANSFER_BUFFER, "i32"), _2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32");
       if (this._namedChildren = new Array(t), t > 0) {
         let s2 = _2;
-        for (let r2 = 0; r2 < t; r2++)
-          this._namedChildren[r2] = unmarshalNode(this.tree, s2), s2 += SIZE_OF_NODE;
+        for (let r2 = 0; r2 < t; r2++) this._namedChildren[r2] = unmarshalNode(this.tree, s2), s2 += SIZE_OF_NODE;
         C._free(_2);
       }
     }
@@ -26968,17 +26207,14 @@ var Node = class _Node {
   descendantsOfType(t, _2, s2) {
     Array.isArray(t) || (t = [t]), _2 || (_2 = ZERO_POINT), s2 || (s2 = ZERO_POINT);
     let r2 = [], a2 = this.tree.language.types;
-    for (let w = 0, c = a2.length; w < c; w++)
-      t.includes(a2[w]) && r2.push(w);
+    for (let w = 0, c = a2.length; w < c; w++) t.includes(a2[w]) && r2.push(w);
     let o2 = C._malloc(SIZE_OF_INT * r2.length);
-    for (let w = 0, c = r2.length; w < c; w++)
-      setValue(o2 + w * SIZE_OF_INT, r2[w], "i32");
+    for (let w = 0, c = r2.length; w < c; w++) setValue(o2 + w * SIZE_OF_INT, r2[w], "i32");
     marshalNode(this), C._ts_node_descendants_of_type_wasm(this.tree[0], o2, r2.length, _2.row, _2.column, s2.row, s2.column);
     let n2 = getValue(TRANSFER_BUFFER, "i32"), u = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32"), m2 = new Array(n2);
     if (n2 > 0) {
       let w = u;
-      for (let c = 0; c < n2; c++)
-        m2[c] = unmarshalNode(this.tree, w), w += SIZE_OF_NODE;
+      for (let c = 0; c < n2; c++) m2[c] = unmarshalNode(this.tree, w), w += SIZE_OF_NODE;
     }
     return C._free(u), C._free(o2), m2;
   }
@@ -27011,29 +26247,25 @@ var Node = class _Node {
     return this._depth;
   }
   descendantForIndex(t, _2 = t) {
-    if (typeof t != "number" || typeof _2 != "number")
-      throw new Error("Arguments must be numbers");
+    if (typeof t != "number" || typeof _2 != "number") throw new Error("Arguments must be numbers");
     marshalNode(this);
     let s2 = TRANSFER_BUFFER + SIZE_OF_NODE;
     return setValue(s2, t, "i32"), setValue(s2 + SIZE_OF_INT, _2, "i32"), C._ts_node_descendant_for_index_wasm(this.tree[0]), unmarshalNode(this.tree);
   }
   namedDescendantForIndex(t, _2 = t) {
-    if (typeof t != "number" || typeof _2 != "number")
-      throw new Error("Arguments must be numbers");
+    if (typeof t != "number" || typeof _2 != "number") throw new Error("Arguments must be numbers");
     marshalNode(this);
     let s2 = TRANSFER_BUFFER + SIZE_OF_NODE;
     return setValue(s2, t, "i32"), setValue(s2 + SIZE_OF_INT, _2, "i32"), C._ts_node_named_descendant_for_index_wasm(this.tree[0]), unmarshalNode(this.tree);
   }
   descendantForPosition(t, _2 = t) {
-    if (!isPoint(t) || !isPoint(_2))
-      throw new Error("Arguments must be {row, column} objects");
+    if (!isPoint(t) || !isPoint(_2)) throw new Error("Arguments must be {row, column} objects");
     marshalNode(this);
     let s2 = TRANSFER_BUFFER + SIZE_OF_NODE;
     return marshalPoint(s2, t), marshalPoint(s2 + SIZE_OF_POINT, _2), C._ts_node_descendant_for_position_wasm(this.tree[0]), unmarshalNode(this.tree);
   }
   namedDescendantForPosition(t, _2 = t) {
-    if (!isPoint(t) || !isPoint(_2))
-      throw new Error("Arguments must be {row, column} objects");
+    if (!isPoint(t) || !isPoint(_2)) throw new Error("Arguments must be {row, column} objects");
     marshalNode(this);
     let s2 = TRANSFER_BUFFER + SIZE_OF_NODE;
     return marshalPoint(s2, t), marshalPoint(s2 + SIZE_OF_POINT, _2), C._ts_node_named_descendant_for_position_wasm(this.tree[0]), unmarshalNode(this.tree);
@@ -27496,8 +26728,7 @@ var TreeCursor = class {
 var Language = class _Language {
   constructor(t, _2) {
     assertInternal(t), this[0] = _2, this.types = new Array(C._ts_language_symbol_count(this[0]));
-    for (let s2 = 0, r2 = this.types.length; s2 < r2; s2++)
-      C._ts_language_symbol_type(this[0], s2) < 2 && (this.types[s2] = UTF8ToString(C._ts_language_symbol_name(this[0], s2)));
+    for (let s2 = 0, r2 = this.types.length; s2 < r2; s2++) C._ts_language_symbol_type(this[0], s2) < 2 && (this.types[s2] = UTF8ToString(C._ts_language_symbol_name(this[0], s2)));
     this.fields = new Array(C._ts_language_field_count(this[0]) + 1);
     for (let s2 = 0, r2 = this.fields.length; s2 < r2; s2++) {
       let a2 = C._ts_language_field_name_for_id(this[0], s2);
@@ -27591,13 +26822,10 @@ var Language = class _Language {
         let U = getValue(g2, "i32");
         g2 += SIZE_OF_INT;
         let W = getValue(g2, "i32");
-        if (g2 += SIZE_OF_INT, U === PREDICATE_STEP_TYPE_CAPTURE)
-          l.push({ type: "capture", name: u[W] });
-        else if (U === PREDICATE_STEP_TYPE_STRING)
-          l.push({ type: "string", value: m2[W] });
+        if (g2 += SIZE_OF_INT, U === PREDICATE_STEP_TYPE_CAPTURE) l.push({ type: "capture", name: u[W] });
+        else if (U === PREDICATE_STEP_TYPE_STRING) l.push({ type: "string", value: m2[W] });
         else if (l.length > 0) {
-          if (l[0].type !== "string")
-            throw new Error("Predicates must begin with a literal value");
+          if (l[0].type !== "string") throw new Error("Predicates must begin with a literal value");
           let T = l[0].value, v2, R = true, k = true;
           switch (T) {
             case "any-not-eq?":
@@ -27605,16 +26833,13 @@ var Language = class _Language {
               R = false;
             case "any-eq?":
             case "eq?":
-              if (l.length !== 3)
-                throw new Error(`Wrong number of arguments to \`#${T}\` predicate. Expected 2, got ${l.length - 1}`);
-              if (l[1].type !== "capture")
-                throw new Error(`First argument of \`#${T}\` predicate must be a capture. Got "${l[1].value}"`);
+              if (l.length !== 3) throw new Error(`Wrong number of arguments to \`#${T}\` predicate. Expected 2, got ${l.length - 1}`);
+              if (l[1].type !== "capture") throw new Error(`First argument of \`#${T}\` predicate must be a capture. Got "${l[1].value}"`);
               if (k = !T.startsWith("any-"), l[2].type === "capture") {
                 let y = l[1].name, x = l[2].name;
                 I[d].push((S) => {
                   let E2 = [], N = [];
-                  for (let F of S)
-                    F.name === y && E2.push(F.node), F.name === x && N.push(F.node);
+                  for (let F of S) F.name === y && E2.push(F.node), F.name === x && N.push(F.node);
                   let B = (F, O2, z) => z ? F.text === O2.text : F.text !== O2.text;
                   return k ? E2.every((F) => N.some((O2) => B(F, O2, R))) : E2.some((F) => N.some((O2) => B(F, O2, R)));
                 });
@@ -27623,8 +26848,7 @@ var Language = class _Language {
                 let y = l[2].value, x = (E2) => E2.text === y, S = (E2) => E2.text !== y;
                 I[d].push((E2) => {
                   let N = [];
-                  for (let F of E2)
-                    F.name === v2 && N.push(F.node);
+                  for (let F of E2) F.name === v2 && N.push(F.node);
                   let B = R ? x : S;
                   return k ? N.every(B) : N.some(B);
                 });
@@ -27635,54 +26859,41 @@ var Language = class _Language {
               R = false;
             case "any-match?":
             case "match?":
-              if (l.length !== 3)
-                throw new Error(`Wrong number of arguments to \`#${T}\` predicate. Expected 2, got ${l.length - 1}.`);
-              if (l[1].type !== "capture")
-                throw new Error(`First argument of \`#${T}\` predicate must be a capture. Got "${l[1].value}".`);
-              if (l[2].type !== "string")
-                throw new Error(`Second argument of \`#${T}\` predicate must be a string. Got @${l[2].value}.`);
+              if (l.length !== 3) throw new Error(`Wrong number of arguments to \`#${T}\` predicate. Expected 2, got ${l.length - 1}.`);
+              if (l[1].type !== "capture") throw new Error(`First argument of \`#${T}\` predicate must be a capture. Got "${l[1].value}".`);
+              if (l[2].type !== "string") throw new Error(`Second argument of \`#${T}\` predicate must be a string. Got @${l[2].value}.`);
               v2 = l[1].name;
               let H = new RegExp(l[2].value);
               k = !T.startsWith("any-"), I[d].push((y) => {
                 let x = [];
-                for (let E2 of y)
-                  E2.name === v2 && x.push(E2.node.text);
+                for (let E2 of y) E2.name === v2 && x.push(E2.node.text);
                 let S = (E2, N) => N ? H.test(E2) : !H.test(E2);
                 return x.length === 0 ? !R : k ? x.every((E2) => S(E2, R)) : x.some((E2) => S(E2, R));
               });
               break;
             case "set!":
-              if (l.length < 2 || l.length > 3)
-                throw new Error(`Wrong number of arguments to \`#set!\` predicate. Expected 1 or 2. Got ${l.length - 1}.`);
-              if (l.some((y) => y.type !== "string"))
-                throw new Error('Arguments to `#set!` predicate must be a strings.".');
+              if (l.length < 2 || l.length > 3) throw new Error(`Wrong number of arguments to \`#set!\` predicate. Expected 1 or 2. Got ${l.length - 1}.`);
+              if (l.some((y) => y.type !== "string")) throw new Error('Arguments to `#set!` predicate must be a strings.".');
               w[d] || (w[d] = {}), w[d][l[1].value] = l[2] ? l[2].value : null;
               break;
             case "is?":
             case "is-not?":
-              if (l.length < 2 || l.length > 3)
-                throw new Error(`Wrong number of arguments to \`#${T}\` predicate. Expected 1 or 2. Got ${l.length - 1}.`);
-              if (l.some((y) => y.type !== "string"))
-                throw new Error(`Arguments to \`#${T}\` predicate must be a strings.".`);
+              if (l.length < 2 || l.length > 3) throw new Error(`Wrong number of arguments to \`#${T}\` predicate. Expected 1 or 2. Got ${l.length - 1}.`);
+              if (l.some((y) => y.type !== "string")) throw new Error(`Arguments to \`#${T}\` predicate must be a strings.".`);
               let V2 = T === "is?" ? c : f;
               V2[d] || (V2[d] = {}), V2[d][l[1].value] = l[2] ? l[2].value : null;
               break;
             case "not-any-of?":
               R = false;
             case "any-of?":
-              if (l.length < 2)
-                throw new Error(`Wrong number of arguments to \`#${T}\` predicate. Expected at least 1. Got ${l.length - 1}.`);
-              if (l[1].type !== "capture")
-                throw new Error(`First argument of \`#${T}\` predicate must be a capture. Got "${l[1].value}".`);
-              for (let y = 2; y < l.length; y++)
-                if (l[y].type !== "string")
-                  throw new Error(`Arguments to \`#${T}\` predicate must be a strings.".`);
+              if (l.length < 2) throw new Error(`Wrong number of arguments to \`#${T}\` predicate. Expected at least 1. Got ${l.length - 1}.`);
+              if (l[1].type !== "capture") throw new Error(`First argument of \`#${T}\` predicate must be a capture. Got "${l[1].value}".`);
+              for (let y = 2; y < l.length; y++) if (l[y].type !== "string") throw new Error(`Arguments to \`#${T}\` predicate must be a strings.".`);
               v2 = l[1].name;
               let j2 = l.slice(2).map((y) => y.value);
               I[d].push((y) => {
                 let x = [];
-                for (let S of y)
-                  S.name === v2 && x.push(S.node.text);
+                for (let S of y) S.name === v2 && x.push(S.node.text);
                 return x.length === 0 ? !R : x.every((S) => j2.includes(S)) === R;
               });
               break;
@@ -27698,8 +26909,7 @@ var Language = class _Language {
   }
   static load(t) {
     let _2;
-    if (t instanceof Uint8Array)
-      _2 = Promise.resolve(t);
+    if (t instanceof Uint8Array) _2 = Promise.resolve(t);
     else {
       let s2 = t;
       if (typeof __Process$ < "u" && __Process$.versions && __Process$.versions.node) {
@@ -27708,8 +26918,7 @@ var Language = class _Language {
       } else
         _2 = fetch(s2).then(
           (r2) => r2.arrayBuffer().then((a2) => {
-            if (r2.ok)
-              return new Uint8Array(a2);
+            if (r2.ok) return new Uint8Array(a2);
             {
               let o2 = new TextDecoder("utf-8").decode(a2);
               throw new Error(`Language.load failed with status ${r2.status}.
@@ -27760,8 +26969,7 @@ var Query = class {
     C._ts_query_delete(this[0]), this[0] = 0;
   }
   matches(t, { startPosition: _2 = ZERO_POINT, endPosition: s2 = ZERO_POINT, startIndex: r2 = 0, endIndex: a2 = 0, matchLimit: o2 = 4294967295, maxStartDepth: n2 = 4294967295 } = {}) {
-    if (typeof o2 != "number")
-      throw new Error("Arguments must be numbers");
+    if (typeof o2 != "number") throw new Error("Arguments must be numbers");
     marshalNode(t), C._ts_query_matches_wasm(this[0], t.tree[0], _2.row, _2.column, s2.row, s2.column, r2, a2, o2, n2);
     let u = getValue(TRANSFER_BUFFER, "i32"), m2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32"), w = getValue(TRANSFER_BUFFER + 2 * SIZE_OF_INT, "i32"), c = new Array(u);
     this.exceededMatchLimit = !!w;
@@ -27795,10 +27003,8 @@ var Query = class {
         endPosition = values.endPosition;
       }
     }
-    if (matchLimit === void 0)
-      matchLimit = 0;
-    if (typeof matchLimit != "number")
-      throw new Error("Arguments must be numbers");
+    if (matchLimit === void 0) matchLimit = 0;
+    if (typeof matchLimit != "number") throw new Error("Arguments must be numbers");
     marshalNode(t), C._ts_query_matches_wasm(this[0], t.tree[0], _.row, _.column, endPosition.row, endPosition.column, r, a, matchLimit, maxStartDepth);
     let u = getValue(TRANSFER_BUFFER, "i32"), m2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32"), w = getValue(TRANSFER_BUFFER + 2 * SIZE_OF_INT, "i32");
     this.exceededMatchLimit = !!w;
@@ -27823,8 +27029,7 @@ var Query = class {
     C._free(m2);
   }
   captures(t, { startPosition: _2 = ZERO_POINT, endPosition: s2 = ZERO_POINT, startIndex: r2 = 0, endIndex: a2 = 0, matchLimit: o2 = 4294967295, maxStartDepth: n2 = 4294967295 } = {}) {
-    if (typeof o2 != "number")
-      throw new Error("Arguments must be numbers");
+    if (typeof o2 != "number") throw new Error("Arguments must be numbers");
     marshalNode(t), C._ts_query_captures_wasm(this[0], t.tree[0], _2.row, _2.column, s2.row, s2.column, r2, a2, o2, n2);
     let u = getValue(TRANSFER_BUFFER, "i32"), m2 = getValue(TRANSFER_BUFFER + SIZE_OF_INT, "i32"), w = getValue(TRANSFER_BUFFER + 2 * SIZE_OF_INT, "i32"), c = [];
     this.exceededMatchLimit = !!w;
@@ -27861,8 +27066,7 @@ function getText(e2, t, _2) {
   let s2 = _2 - t, r2 = e2.textCallback(t, null, _2);
   for (t += r2.length; t < _2; ) {
     let a2 = e2.textCallback(t, null, _2);
-    if (!(a2 && a2.length > 0))
-      break;
+    if (!(a2 && a2.length > 0)) break;
     t += a2.length, r2 += a2;
   }
   return t > _2 && (r2 = r2.slice(0, s2)), r2;
@@ -27875,8 +27079,7 @@ function unmarshalCaptures(e2, t, _2, s2) {
   return _2;
 }
 function assertInternal(e2) {
-  if (e2 !== INTERNAL)
-    throw new Error("Illegal constructor");
+  if (e2 !== INTERNAL) throw new Error("Illegal constructor");
 }
 function isPoint(e2) {
   return e2 && typeof e2.row == "number" && typeof e2.column == "number";
@@ -27887,8 +27090,7 @@ function marshalNode(e2) {
 }
 function unmarshalNode(e2, t = TRANSFER_BUFFER) {
   let _2 = getValue(t, "i32");
-  if (_2 === 0)
-    return null;
+  if (_2 === 0) return null;
   let s2 = getValue(t += SIZE_OF_INT, "i32"), r2 = getValue(t += SIZE_OF_INT, "i32"), a2 = getValue(t += SIZE_OF_INT, "i32"), o2 = getValue(t += SIZE_OF_INT, "i32"), n2 = new Node(INTERNAL, e2);
   return n2.id = _2, n2.startIndex = s2, n2.startPosition = { row: r2, column: a2 }, n2[0] = o2, n2;
 }
@@ -28836,7 +28038,7 @@ q\0\0suQ\0\0\0\0w y\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0
 \0\0\0;\0\0\0\br\0\0\0\0\0\0Y\0\0\0Y\0\0Y\0\0\0Y\0\0\0Y\0\x001\0\0)\0\0D"\0\x008\0\0OD\0\0c\0\0\0c\0\0c\0\0\0c\0\0c\0\0\0c\0\0|\0\0\0|\0\0\0|\0\0\0\0\0\0"\0\0W\0\0c\0\0c\0\0\0c\0\x003\0\0\x003\0\0"\0\0\0\0\x001\0\0\0L\0\0\0\bL\0\0\0L\0\0\x006\0\0&"\0\0E\0\0c\0\0S\0\0\0r\0\0L\0\0\0L\0\0\0L\0"\0\0h\0\0yD\0\0c\0\0\0c\0\0\0\0\0\0\0Y\0\0\0Y\0\0Y\0\0\0Y\0\0\0Y\0\0n\0\0\0n\0\0n\0\0\0n\0\0n\0\0\x009\0\0\b5\0\0Y\0\0Y\0\0Y\0\0\0Y\0\0Y\0\0\0&\0\0\0&\0\0&\0\0\0&\0\0&\0\0\0J\0\0FD\0\0m\0\0\0\0]\0\0\0\f\0\0\0|\0\0\0\x1B\0 \0\0\0\0\0&\0\0\0\x007\0\0\0\0d\0\0T\0\0\0\0s \0\0@\0\0B@\0\0\0B\0\0\0\bB\0\0\0*\0\0\0\0\0\0\0s\0\0\0;\0\0b\0\0\0N\0\0u\0\0\0 \0\0\f"\0\x003\0\0$D\0\0 \0\0\bY\0\0Y\0\0\0Y\0\0Y\0\0\0Y\0\0=\0\0\0=\0\0\0=\0\0=\0\0\0=\0\0	\0\0\0y\0\0Y\0\0Y\0\0\0Y\0\0Y\0\0\0Y\0\0)\0\0\0)\0\0)\0\0\0)\0\0\0)\0\0j\0\0Z\0\0Y\0\0Y\0\0Y\0\0\0Y\0\0\0Y\0\0Y\0\0\0Y\0\0Y\0\0\0f\0\0fD\0\0f\0\0\bf\0\0f\0\0f\0\0f"\0\0f\0\0fD\0\0Y\0\0\0Y\0\0Y\0\0\0.\0\0\0.\0"\0\0.\0\0\x004D\0\0\x004\0\0\0\b4\0\0\0
 \b\0\0\x07\0\x004\x07 \0\0G\x07\0\0!D\x07\0\x002\x07\0\0\0I\x07\0\0\`\x07\0\0\0\x07\0\0r\x07"\0\0{\x07\0\0Z@\x07\0\0\0\0\0\0\0\0\0\0"\0\0\0\0\0\0\0\0\0\0`);
 
-// main/javascript/helpers.js
+// helpers.js
 var ensureUniqueNames = (headers) => {
   const duplicateHeadersExist = new Set(headers).size !== headers.length;
   if (!duplicateHeadersExist) {
@@ -28884,7 +28086,7 @@ var rowify = (data, { defaultHeaders = [] } = {}) => {
   return rows;
 };
 
-// main/javascript/normal_csv.js
+// normal_csv.js
 var csvEscapeCell = (stringData, delimiter7 = ",") => {
   if (stringData.includes(delimiter7) || stringData.includes("\n") || stringData.includes("\r") || stringData.includes('"')) {
     return `"${stringData.replace(/"/g, '""')}"`;
@@ -28941,7 +28143,7 @@ function* csvParseIter(csvString, { delimiter: delimiter7 = ",", warnings = true
   }
 }
 
-// main/javascript/main.js
+// main.js
 var yamlParser = await parserFromWasm(yaml_default);
 var toTypedCsv = Symbol();
 var w3schoolsIsoDateRegex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
@@ -29069,7 +28271,7 @@ var parse9 = (csvString, { delimiter: delimiter7 = ",", warnings = true, outputF
   }
   return outputObject;
 };
-var stringifyCell = (each, options = {}) => {
+var stringifyCell = (each, options = { alwaysEscapeNewlines: false }) => {
   if (each == void 0) {
     return "";
   }
@@ -29096,7 +28298,10 @@ var stringifyCell = (each, options = {}) => {
     return each[toTypedCsv](options);
   }
   if (typeof each != "string") {
-    let newString = stringify(each, { collectionStyle: "flow", lineWidth: Infinity, ...options.yamlOptions });
+    let newString = stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions });
+    if (!alwaysEscapeNewlines && newString.match(/\\n/)) {
+      newString = stringify(each, { lineWidth: Infinity, ...options.yamlOptions });
+    }
     if (newString[newString.length - 1] == "\n") {
       newString = newString.slice(0, -1);
     }
@@ -29105,7 +28310,10 @@ var stringifyCell = (each, options = {}) => {
   if (matchesReservedPattern(each)) {
     return JSON.stringify(each);
   }
-  const asString = stringify(each, { collectionStyle: "flow", lineWidth: Infinity, ...options.yamlOptions });
+  let asString = stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions });
+  if (!alwaysEscapeNewlines && asString.match(/\\n/)) {
+    asString = stringify(each, { lineWidth: Infinity, ...options.yamlOptions });
+  }
   if ((asString.startsWith('"') || asString.startsWith("'")) && asString.endsWith("\n")) {
     return asString.slice(0, -1);
   } else {

@@ -223,7 +223,7 @@ export const parse = (csvString, { delimiter=",", warnings=true, outputForm="row
  * YAML library when formatting complex data types.
  * @returns {string} - The escaped CSV cell value.
  */
-export const stringifyCell = (each, options={})=>{
+export const stringifyCell = (each, options={alwaysEscapeNewlines:false})=>{
     // undefined become empty cell
     if (each == undefined) {
         return ""
@@ -255,7 +255,11 @@ export const stringifyCell = (each, options={})=>{
     }
     // remaining non-strings just get yamlified
     if (typeof each != "string") {
-        let newString = yaml.stringify(each, { collectionStyle: 'flow', lineWidth: Infinity, ...options.yamlOptions })
+        let newString = yaml.stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions })
+        // if had to escape newlines, then don't use flow style
+        if (!alwaysEscapeNewlines && newString.match(/\\n/)) {
+            newString = yaml.stringify(each, { lineWidth: Infinity, ...options.yamlOptions })
+        }
         // remove trailing newline (which is always a safe operation)
         if (newString[newString.length-1] == "\n") {
             newString = newString.slice(0,-1)
@@ -271,7 +275,10 @@ export const stringifyCell = (each, options={})=>{
         return JSON.stringify(each)
     }
     // otherwise rely on yaml to quote it correctly or make it a block-string
-    const asString = yaml.stringify(each, { collectionStyle: 'flow', lineWidth: Infinity, ...options.yamlOptions })
+    let asString = yaml.stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions })
+    if (!alwaysEscapeNewlines && asString.match(/\\n/)) {
+        asString = yaml.stringify(each, { lineWidth: Infinity, ...options.yamlOptions })
+    }
     if ((asString.startsWith('"') || asString.startsWith("'")) && asString.endsWith("\n")) {
         return asString.slice(0,-1)
     } else {

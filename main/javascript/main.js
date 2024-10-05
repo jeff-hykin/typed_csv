@@ -238,7 +238,7 @@ export const stringifyCell = (each, options={alwaysEscapeNewlines:false})=>{
     }
     // empty strings contain quotes
     if (each === "") {
-        return '""'
+        return "''"
     }
     if (each instanceof Date) {
         return each.toISOString()

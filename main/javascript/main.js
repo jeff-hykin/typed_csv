@@ -257,7 +257,7 @@ export const stringifyCell = (each, options={alwaysEscapeNewlines:false})=>{
     if (typeof each != "string") {
         let newString = yaml.stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions })
         // if had to escape newlines, then don't use flow style
-        if (!alwaysEscapeNewlines && newString.match(/\\n/)) {
+        if (!options.alwaysEscapeNewlines && newString.match(/\\n/)) {
             newString = yaml.stringify(each, { lineWidth: Infinity, ...options.yamlOptions })
         }
         // remove trailing newline (which is always a safe operation)
@@ -276,7 +276,7 @@ export const stringifyCell = (each, options={alwaysEscapeNewlines:false})=>{
     }
     // otherwise rely on yaml to quote it correctly or make it a block-string
     let asString = yaml.stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions })
-    if (!alwaysEscapeNewlines && asString.match(/\\n/)) {
+    if (!options.alwaysEscapeNewlines && asString.match(/\\n/)) {
         asString = yaml.stringify(each, { lineWidth: Infinity, ...options.yamlOptions })
     }
     if ((asString.startsWith('"') || asString.startsWith("'")) && asString.endsWith("\n")) {

@@ -28299,7 +28299,7 @@ var stringifyCell = (each, options = { alwaysEscapeNewlines: false }) => {
   }
   if (typeof each != "string") {
     let newString = stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions });
-    if (!alwaysEscapeNewlines && newString.match(/\\n/)) {
+    if (!options.alwaysEscapeNewlines && newString.match(/\\n/)) {
       newString = stringify(each, { lineWidth: Infinity, ...options.yamlOptions });
     }
     if (newString[newString.length - 1] == "\n") {
@@ -28311,7 +28311,7 @@ var stringifyCell = (each, options = { alwaysEscapeNewlines: false }) => {
     return JSON.stringify(each);
   }
   let asString = stringify(each, { flowLevel: 0, lineWidth: Infinity, ...options.yamlOptions });
-  if (!alwaysEscapeNewlines && asString.match(/\\n/)) {
+  if (!options.alwaysEscapeNewlines && asString.match(/\\n/)) {
     asString = stringify(each, { lineWidth: Infinity, ...options.yamlOptions });
   }
   if ((asString.startsWith('"') || asString.startsWith("'")) && asString.endsWith("\n")) {
